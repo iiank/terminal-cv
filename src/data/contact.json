@@ -1,0 +1,8 @@
+{
+  "intro": "Three ways to reach me.",
+  "fields": [
+    { "id": "contact-email", "label": "Email", "value": "iiankhr@gmail.com" },
+    { "id": "contact-github", "label": "GitHub", "value": "github.com/iiank" },
+    { "id": "contact-linkedin", "label": "LinkedIn", "value": "linkedin.com/in/iiank" }
+  ]
+}
