@@ -29,7 +29,7 @@ function closeFile() {
 
     <TerminalWindow @open-file="openFile" />
 
-    <p class="hint">Mock site. Type <span>help</span> once the terminal is ready.</p>
+    <p class="hint">Type <span>help</span> once the terminal is ready.</p>
   </main>
 
   <FileViewer

@@ -486,6 +486,8 @@ body { min-height: 100vh; }
   color: var(--fg-0);
 }
 
+.profile__tagline + .profile__tagline { margin-top: 0; }
+
 .profile__tagline {
   margin: 3px 0 0;
   font-size: 0.85rem;
@@ -605,6 +607,9 @@ body { min-height: 100vh; }
   max-width: 70ch;
 }
 
+/* Consecutive lines sit flush; the 8px only separates body from title. */
+.cell__body + .cell__body { margin-top: 0; }
+
 /* ---------------------------------------------------------
    contact.txt
    --------------------------------------------------------- */
@@ -616,6 +621,8 @@ body { min-height: 100vh; }
   font-size: 0.84rem;
   color: var(--fg-2);
 }
+
+.contact__intro p { margin: 0; }
 
 .contact__field { margin-bottom: 16px; }
 
