@@ -11,20 +11,38 @@ const dateFormat = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit', month: 'short', year: 'numeric'
 });
 
-function daysSince(iso) {
-  const then = new Date(iso + 'T00:00:00');
-  return Math.floor((Date.now() - then.getTime()) / 86400000);
+/* Dates in last-updated.json are written DD-MM-YYYY. Returns null rather
+   than an Invalid Date, so one bad entry cannot break the whole table. */
+function parseDate(value) {
+  const parts = String(value).split('-');
+  if (parts.length !== 3) { return null; }
+
+  const day = Number(parts[0]);
+  const month = Number(parts[1]);
+  const year = Number(parts[2]);
+
+  const parsed = new Date(year, month - 1, day);
+
+  /* Rejects impossible days such as 31-02-2026, which would otherwise
+     silently roll over into the following month. */
+  const valid = parsed.getDate() === day
+    && parsed.getMonth() === month - 1
+    && parsed.getFullYear() === year;
+
+  return valid ? parsed : null;
 }
 
 const rows = computed(function () {
   return data.pages.map(function (page) {
-    const age = daysSince(page.updated);
+    const date = parseDate(page.updated);
+    const age = date ? Math.floor((Date.now() - date.getTime()) / 86400000) : 0;
+
     return {
       file: page.file,
       note: page.note,
       age,
-      shown: dateFormat.format(new Date(page.updated + 'T00:00:00')),
-      stale: age > data.reviewAfterDays
+      shown: date ? dateFormat.format(date) : 'unknown',
+      stale: date ? age > data.reviewAfterDays : false
     };
   }).sort(function (a, b) { return b.age - a.age; });
 });

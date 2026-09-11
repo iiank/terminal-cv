@@ -1,5 +1,6 @@
 <script setup>
 import data from '../../data/experiences.json';
+import { toLines } from '../../utils/toLines.js';
 
 const profile = data.profile;
 const roles = data.roles;
@@ -11,7 +12,7 @@ const roles = data.roles;
       <div class="profile__avatar" aria-hidden="true">{{ profile.initials }}</div>
       <div>
         <p class="profile__name">{{ profile.name }}</p>
-        <p class="profile__tagline">{{ profile.tagline }}</p>
+        <p v-for="(paragraph, part) in toLines(profile.tagline)" :key="part" class="profile__tagline">{{ paragraph }}</p>
         <p class="profile__meta">{{ profile.location }} / {{ roles.length }} entries in experiences.json</p>
       </div>
     </header>

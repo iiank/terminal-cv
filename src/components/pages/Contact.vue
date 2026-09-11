@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from 'vue';
+import data from '../../data/contact.json';
+import { toLines } from '../../utils/toLines.js';
 
-const fields = [
-  { id: 'contact-email', label: 'Email', value: 'iiankhr@gmail.com' },
-  { id: 'contact-github', label: 'GitHub', value: 'github.com/iiank' },
-  { id: 'contact-linkedin', label: 'LinkedIn', value: 'linkedin.com/in/iiank' }
-];
-
+const fields = data.fields;
+const intro = toLines(data.intro);
 const note = ref('');
 
 async function copyField(field, event) {
@@ -25,7 +23,9 @@ async function copyField(field, event) {
 
 <template>
   <div class="contact">
-    <p class="contact__intro">Three ways to reach me.</p>
+    <div class="contact__intro">
+      <p v-for="(paragraph, part) in intro" :key="part">{{ paragraph }}</p>
+    </div>
 
     <div v-for="field in fields" :key="field.id" class="contact__field">
       <label :for="field.id">{{ field.label }}</label>
