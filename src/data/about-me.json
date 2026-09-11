@@ -3,23 +3,16 @@
     {
       "heading": "More about me",
       "paragraphs": [
-        "Business Analytics student @ NUS specialising in Machine Learning-based Analytics.",
-        "With data, I like that the same numbers can tell you something completely different",
-        "once you find another way to look at them. That's what interests me about machine",
-        "learning: uncovering something unexpected, then figuring out how to show it so",
-        "someone else can have that \"oh, now I see it\" moment too."
+        "Business Analytics student @ NUS specialising in Machine Learning-based Analytics. With data, I like that the same numbers can tell you something completely different once you find another way to look at them. That's what interests me about machine learning: uncovering something unexpected, then figuring out how to show it so someone else can have that \"oh, now I see it\" moment too."
       ],
       "quote": [
-        "Psst... I'm usually listening to music or getting lost in the",
-        "latest tech developments -- quantum chips, gaming hardware, phones,",
-        "Linux, Raspberry Pis... whatever catches my attention that day."
+        "Psst... I'm usually listening to music or getting lost in the latest tech developments -- quantum chips, gaming hardware, phones, Linux, Raspberry Pis... whatever catches my attention that day."
       ]
     },
     {
       "heading": "Tech stack",
       "paragraphs": [
-        "Excepteur sint occaecat cupidatat non proident, sunt in culpa",
-        "qui officia deserunt mollit anim id est laborum."
+        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
       ],
       "stack": [
         { "label": "Programming & Data", "items": ["Python", "SQL", "R", "Java", "VBA"] },

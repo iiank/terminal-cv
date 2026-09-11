@@ -6,7 +6,7 @@ import data from '../../data/about-me.json';
 
 /* Builds a bullet of chips with a single space between each one. */
 function stackLine(label, items) {
-  const tokens = [{ c: 'md-mark', t: '- ' }, { t: label + ': ' }];
+  const tokens = [{ c: 'md-mark', t: '- ' }, { t: label + ': \n' }];
   items.forEach(function (item, index) {
     if (index) { tokens.push({ t: ' ' }); }
     tokens.push({ c: 'md-code', t: item });
