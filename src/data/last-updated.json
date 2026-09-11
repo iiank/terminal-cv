@@ -1,9 +1,9 @@
 {
   "reviewAfterDays": 90,
   "pages": [
-    { "file": "about_me.md",      "updated": "2026-08-28", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "experiences.json", "updated": "2026-09-02", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "projects.ipynb",   "updated": "2026-06-14", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "contact.txt",      "updated": "2026-05-30", "note": "Lorem ipsum dolor sit amet." }
+    { "file": "about_me.md",      "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
+    { "file": "experiences.json", "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
+    { "file": "projects.ipynb",   "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
+    { "file": "contact.txt",      "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." }
   ]
 }

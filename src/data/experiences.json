@@ -2,7 +2,10 @@
   "profile": {
     "initials": "IK",
     "name": "Iian Khor",
-    "tagline": "Business Analytics undergraduate. Specialisation in Machine Learning-based Analytics.",
+    "tagline": [
+      "Business Analytics undergraduate",
+      "Specialisation in Machine Learning-based Analytics"
+    ],
     "location": "Singapore"
   },
   "roles": [

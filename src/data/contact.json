@@ -1,5 +1,8 @@
 {
-  "intro": "Three ways to reach me.",
+  "intro": [
+    "Don't be a stranger!",
+    "I'm always happy to chat about new opportunities, exciting projects, or whatever's on your mind."
+  ],
   "fields": [
     { "id": "contact-email", "label": "Email", "value": "iiankhr@gmail.com" },
     { "id": "contact-github", "label": "GitHub", "value": "github.com/iiank" },
