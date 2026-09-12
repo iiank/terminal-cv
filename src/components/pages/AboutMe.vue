@@ -2,11 +2,14 @@
 /* Content lives in src/data/about-me.json. This component turns it into
    token lines so the markdown can be tinted without raw HTML. */
 
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import data from '../../data/about-me.json';
+import { toLines } from '../../utils/toLines.js';
+import { wrapTokens } from '../../utils/wrapTokens.js';
 
 /* Builds a bullet of chips with a single space between each one. */
 function stackLine(label, items) {
-  const tokens = [{ c: 'md-mark', t: '- ' }, { t: label + ': \n' }];
+  const tokens = [{ c: 'md-mark', t: '- ' }, { t: label + ': ' }];
   items.forEach(function (item, index) {
     if (index) { tokens.push({ t: ' ' }); }
     tokens.push({ c: 'md-code', t: item });
@@ -23,11 +26,11 @@ function buildLines() {
     out.push([{ c: 'md-hash', t: '# ' }, { c: 'md-head', t: section.heading }]);
     out.push([]);
 
-    (section.paragraphs || []).forEach(function (paragraph) {
+    toLines(section.paragraphs).forEach(function (paragraph) {
       out.push([{ t: paragraph }]);
     });
 
-    const quotes = [].concat(section.quote || []);
+    const quotes = toLines(section.quote);
     if (quotes.length) {
       out.push([]);
       quotes.forEach(function (quote) {
@@ -56,7 +59,47 @@ function buildLines() {
   return out;
 }
 
-const lines = buildLines();
+const sourceLines = buildLines();
+
+/* Hard-wrapping happens at the column that actually fits, so every row on
+   screen is a real line with its own number. */
+const codeEl = ref(null);
+const columns = ref(70);
+let observer = null;
+
+function measure() {
+  const el = codeEl.value;
+  if (!el) { return; }
+
+  const probe = document.createElement('span');
+  probe.textContent = '0'.repeat(50);
+  probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;';
+  el.appendChild(probe);
+  const charWidth = probe.getBoundingClientRect().width / 50;
+  probe.remove();
+
+  if (!charWidth) { return; }
+
+  const sample = el.querySelector('.line');
+  const gutter = sample ? parseFloat(getComputedStyle(sample).paddingLeft) : 62;
+  const available = el.clientWidth - gutter - 16;
+
+  columns.value = Math.max(20, Math.floor(available / charWidth));
+}
+
+const lines = computed(function () {
+  return sourceLines.flatMap(function (line) { return wrapTokens(line, columns.value); });
+});
+
+onMounted(function () {
+  measure();
+  observer = new ResizeObserver(measure);
+  observer.observe(codeEl.value);
+});
+
+onBeforeUnmount(function () {
+  if (observer) { observer.disconnect(); }
+});
 </script>
 
 <template>
@@ -65,7 +108,7 @@ const lines = buildLines();
       <span class="editor__tab editor__tab--active">about_me.md</span>
     </div>
 
-    <div class="editor__code">
+    <div ref="codeEl" class="editor__code">
       <p v-for="(line, index) in lines" :key="index" class="line"><span v-for="(token, part) in line" :key="part" :class="token.c">{{ token.t }}</span></p>
     </div>
 

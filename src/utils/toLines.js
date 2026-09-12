@@ -4,5 +4,13 @@
 
 export function toLines(value) {
   if (value === undefined || value === null) { return []; }
-  return [].concat(value).filter(function (line) { return String(line).length > 0; });
+
+  return [].concat(value)
+    .map(function (entry) {
+      if (Array.isArray(entry)) {
+        return entry.map(function (part) { return String(part).trim(); }).join(' ');
+      }
+      return String(entry);
+    })
+    .filter(function (line) { return line.length > 0; });
 }
