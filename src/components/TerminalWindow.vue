@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, nextTick, onMounted } from 'vue';
 import { useTerminal, PROMPT } from '../composables/useTerminal.js';
+import FileIcon from './FileIcon.vue';
 
 const emit = defineEmits(['open-file']);
 
@@ -49,7 +50,7 @@ onMounted(boot);
       <p v-for="line in lines" :key="line.id" :class="{ 'is-file': line.kind === 'file' }">
         <template v-if="line.kind === 'text'"><span :class="line.tone">{{ line.text }}</span></template>
         <template v-else-if="line.kind === 'command'"><span class="soft">{{ PROMPT }}</span><span class="bright">{{ line.text }}</span></template>
-        <template v-else-if="line.kind === 'file'"><button type="button" class="file-link" @click="emit('open-file', line.name)">{{ line.name }}</button></template>
+        <template v-else-if="line.kind === 'file'"><button type="button" class="file-link" @click="emit('open-file', line.name)"><FileIcon class="file-link__icon" :name="line.name" />{{ line.name }}</button></template>
         <template v-else><span class="soft">{{ PROMPT }}</span><span class="cursor" aria-hidden="true"></span></template>
       </p>
     </div>

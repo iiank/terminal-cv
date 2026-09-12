@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import FileIcon from './FileIcon.vue';
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -9,7 +10,6 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const closeBtn = ref(null);
-const extension = computed(function () { return '.' + props.name.split('.').pop(); });
 
 let lastFocused = null;
 
@@ -43,7 +43,7 @@ onBeforeUnmount(function () {
       aria-modal="true"
       :aria-label="name">
       <div class="titlebar">
-        <span class="titlebar__icon titlebar__icon--file" aria-hidden="true">{{ extension }}</span>
+        <FileIcon class="titlebar__icon titlebar__icon--file" :name="name" />
         <h2 class="titlebar__title">{{ name }}</h2>
         <div class="titlebar__controls">
           <button
