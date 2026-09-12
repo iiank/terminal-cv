@@ -21,7 +21,11 @@ export function wrapTokens(tokens, width) {
   }
 
   tokens.forEach(function (token) {
-    const parts = String(token.t).split(/(\s+)/).filter(function (part) { return part !== ''; });
+    /* A chip is one unit. Splitting it on its inner space would render
+       each word as a separate bordered box. */
+    const parts = token.c === 'md-code'
+      ? [String(token.t)]
+      : String(token.t).split(/(\s+)/).filter(function (part) { return part !== ''; });
 
     parts.forEach(function (part) {
       if (length + part.length <= width) {
