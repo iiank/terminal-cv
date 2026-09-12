@@ -7,14 +7,21 @@ import data from '../../data/about-me.json';
 import { toLines } from '../../utils/toLines.js';
 import { wrapTokens } from '../../utils/wrapTokens.js';
 
-/* Builds a bullet of chips with a single space between each one. */
-function stackLine(label, items) {
-  const tokens = [{ c: 'md-mark', t: '- ' }, { t: label + ': ' }];
+/* A stack group is two lines: the label, then its chips indented beneath.
+   The indent token is marked md-mark so wrapTokens treats it as a marker
+   and keeps wrapped rows aligned under the first chip. */
+function stackLines(label, items) {
+  const chips = [{ c: 'md-mark', t: '    ' }];
+
   items.forEach(function (item, index) {
-    if (index) { tokens.push({ t: ' ' }); }
-    tokens.push({ c: 'md-code', t: item });
+    if (index) { chips.push({ t: ' ' }); }
+    chips.push({ c: 'md-code', t: item });
   });
-  return tokens;
+
+  return [
+    [{ c: 'md-mark', t: '- ' }, { t: label + ':' }],
+    chips
+  ];
 }
 
 function buildLines() {
@@ -41,7 +48,9 @@ function buildLines() {
     if (section.stack) {
       out.push([]);
       section.stack.forEach(function (group) {
-        out.push(stackLine(group.label, group.items));
+        stackLines(group.label, group.items).forEach(function (line) {
+          out.push(line);
+        });
       });
     }
   });
