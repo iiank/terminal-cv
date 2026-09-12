@@ -173,14 +173,19 @@ body { min-height: 100vh; }
 }
 
 .titlebar__icon--file {
-  width: auto;
-  height: auto;
-  padding: 0 2px;
-  font-size: 0.72rem;
-  letter-spacing: 0.03em;
+  width: 15px;
+  height: 15px;
   color: var(--icon-file);
   background: none;
   border: 0;
+}
+
+.file-link__icon {
+  width: 1em;
+  height: 1em;
+  margin-right: 5px;
+  vertical-align: -0.15em;
+  color: var(--fg-2);
 }
 
 .titlebar__title {
@@ -605,6 +610,51 @@ body { min-height: 100vh; }
   font-size: 0.84rem;
   color: var(--fg-2);
   max-width: 70ch;
+}
+
+/* Cell output: the link and its rendered repository card. */
+.cell--output { padding-top: 8px; }
+
+.cell__marker--out {
+  padding-top: 2px;
+  font-size: 0.72rem;
+  color: var(--fg-2);
+}
+
+.cell__result {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cell__repo {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--fg-1);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--fg-3);
+}
+
+.cell__repo:hover,
+.cell__repo:focus-visible {
+  color: var(--fg-0);
+  border-bottom-color: var(--fg-0);
+}
+
+.cell__preview {
+  display: block;
+  width: min(420px, 100%);
+  margin-top: 8px;
+  padding: 4px;
+  background: var(--bg-3);
+  border: 1px solid var(--line-1);
+}
+
+.cell__preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  object-fit: cover;
+  background: var(--bg-1);
 }
 
 /* Consecutive lines sit flush; the 8px only separates body from title. */
