@@ -17,7 +17,7 @@
     "dates": "Mar 2021 - Aug 2021",
     "length": "6 months",
     "points": [
-      "Co-developed an autonomous mobile robot intergrating intelligent path planning, sensor-based obstacle avoidance, computer vision and robotic object manipulation.",
+      "Co-developed an autonomous mobile robot integrating intelligent path planning, sensor-based obstacle avoidance, computer vision and robotic object manipulation.",
       "Implemented and tuned ROS Navigation Stack components, including transform (TF) coordinate frames, to support localisation and dynamic obstacle detection."
     ],
     "tags": ["ROS", "Computer Vision", "Python"]

@@ -16,7 +16,7 @@
       ],
       "stack": [
         { "label": "Programming & Data", "items": ["Python", "SQL", "R", "Java", "VBA"] },
-        { "label": "Data Analysis & Visutalisation Tools", "items": ["Tableau", "Jupyter Notebook", "R Studio", "Microsoft Excel"] }
+        { "label": "Data Analysis & Visualisation Tools", "items": ["Tableau", "Jupyter Notebook", "R Studio", "Microsoft Excel"] }
       ]
     }
   ],

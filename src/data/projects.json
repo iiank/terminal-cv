@@ -7,7 +7,7 @@
         "An end-to-end agentic AI pipeline using LangGraph and PySpark to automate data analysis, feature engineering, and model training.",
         "Implemented with human-in-the-loop review gates and automated quality checks."
       ],
-      "repo": "iiank/Twitter-Bot-Fraud-Detection"
+      "repo": "iiank/Agentic-AI-for-Big-Data-Analytics"
     },
     {
       "title": "Twitter Bot Detection Model",
@@ -22,7 +22,7 @@
     {
       "title": "NUS Datathon 2026",
       "body": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      "repo": "iiank/terminal-cv"
+      "repo": "iiank/NUS-SDSS-Datathon-2026-Team-The-Outliers"
     },
     {
       "title": "NUS SDSS Datathon 2025",
