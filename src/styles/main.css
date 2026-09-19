@@ -3,6 +3,9 @@
    Monoscale palette, Consolas throughout.
    Tokens run from bg (furthest back) to fg (furthest forward),
    so light mode is a value swap rather than a rewrite.
+   Every fg token clears WCAG AA (4.5:1) against every bg token in both
+   themes, so any text colour may sit on any surface. Check that before
+   darkening fg-3 or fg-2 for looks: fg-3 on bg-3 is the tightest pair.
    ========================================================= */
 
 :root,
@@ -13,8 +16,8 @@
   --bg-3: #1e1e1e;   /* raised panels, chips      */
   --line-1: #2b2b2b; /* soft borders, chrome      */
   --line-2: #3d3d3d; /* strong borders            */
-  --fg-3: #6b6b6b;   /* muted text                */
-  --fg-2: #949494;   /* secondary text            */
+  --fg-3: #858585;   /* muted text                */
+  --fg-2: #a0a0a0;   /* secondary text            */
   --fg-1: #c2c2c2;   /* body text                 */
   --fg-0: #e6e6e6;   /* bright text               */
   --icon-file: #ffffff;
@@ -28,8 +31,8 @@
   --bg-3: #e0e0e0;
   --line-1: #cccccc;
   --line-2: #adadad;
-  --fg-3: #8a8a8a;
-  --fg-2: #6a6a6a;
+  --fg-3: #5f5f5f;
+  --fg-2: #4e4e4e;
   --fg-1: #3c3c3c;
   --fg-0: #101010;
   --icon-file: #101010;   /* white would vanish on a light title bar */
@@ -381,6 +384,10 @@ body { min-height: 100dvh; }
 
 .viewer__body {
   overflow: auto;
+  /* Reserves the scrollbar's width whether or not it is showing, so the
+     measured column count in about_me.md cannot oscillate as the wrapped
+     content grows past the height of the window. */
+  scrollbar-gutter: stable;
   background: var(--bg-2);
 }
 
@@ -836,6 +843,9 @@ body { min-height: 100dvh; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The caret stays visible, it just stops flashing. */
+  .cursor { animation: none; }
+
   .promptbar__button.is-flashing {
     animation: none;
     background: var(--fg-0);
@@ -844,3 +854,46 @@ body { min-height: 100dvh; }
   }
   * { transition: none !important; }
 }
+
+/* ---------------------------------------------------------
+   No-JavaScript fallback
+   Everything else on the page is rendered by Vue, so this is
+   the whole site for a crawler or a blocked script.
+   --------------------------------------------------------- */
+
+.fallback {
+  width: min(680px, 100%);
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 48px) clamp(14px, 4vw, 28px);
+  color: var(--fg-1);
+}
+
+.fallback h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--fg-0);
+}
+
+.fallback h2 {
+  margin: 24px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--fg-0);
+}
+
+.fallback p {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  max-width: 62ch;
+}
+
+.fallback ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.88rem;
+}
+
+.fallback li { margin-bottom: 4px; }
+
+.fallback a { color: var(--fg-0); }
