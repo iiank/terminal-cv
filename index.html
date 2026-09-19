@@ -3,12 +3,68 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Applied before the stylesheet paints, so a visitor whose system or saved
+     choice is light mode never sees a dark flash. The storage key must stay in
+     step with STORAGE_KEY in src/composables/useTheme.js. -->
+<script>
+  (function () {
+    var theme = 'dark';
+    try {
+      var saved = localStorage.getItem('terminal-cv-theme');
+      if (saved === 'light' || saved === 'dark') {
+        theme = saved;
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        theme = 'light';
+      }
+    } catch (error) {
+      /* Private browsing blocks storage. The dark default still applies. */
+    }
+    document.documentElement.dataset.theme = theme;
+  }());
+</script>
+
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%230c0c0c'/><rect x='2' y='11' width='4' height='2' fill='%23e6e6e6'/><path d='M3 4l3 2.5L3 9' stroke='%23e6e6e6' stroke-width='1.6' fill='none'/></svg>">
+
 <title>Iian Khor - Terminal CV</title>
 <meta name="description" content="Welcome to my command prompt style portfolio!">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#dcdcdc" media="(prefers-color-scheme: light)">
+
+<!-- Link previews. Replace https://example.com with the deployed address
+     before sharing: LinkedIn, Slack and WhatsApp all discard a relative
+     og:image, so these two must be absolute URLs. -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Iian Khor">
+<meta property="og:title" content="Iian Khor - Terminal CV">
+<meta property="og:description" content="A command prompt you can type into. Run git pull to open my CV, projects and contact details.">
+<meta property="og:url" content="https://example.com/">
+<meta property="og:image" content="https://example.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A command prompt window titled Terminal.exe listing about_me.md, experiences.json, projects.ipynb and contact.txt.">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
 <div id="app"></div>
+
+<!-- Everything above renders through JavaScript, so this is what a crawler,
+     a link scraper or a visitor with scripts disabled reads instead. -->
+<noscript>
+  <div class="fallback">
+    <h1>Iian Khor</h1>
+    <p>Business Analytics undergraduate. Specialisation in Machine Learning-based Analytics. Singapore.</p>
+    <p>This CV is presented as a working command prompt, which needs JavaScript. The details are below.</p>
+    <h2>Contact</h2>
+    <ul>
+      <li>Email: <a href="mailto:iiankhr@gmail.com">iiankhr@gmail.com</a></li>
+      <li>GitHub: <a href="https://github.com/iiank">github.com/iiank</a></li>
+      <li>LinkedIn: <a href="https://linkedin.com/in/iiank">linkedin.com/in/iiank</a></li>
+    </ul>
+  </div>
+</noscript>
+
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

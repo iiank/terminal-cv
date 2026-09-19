@@ -8,9 +8,21 @@ const emit = defineEmits(['open-file']);
 const output = ref(null);
 const inputEl = ref(null);
 
-const { lines, command, busy, flashing, boot, submit, hasInteracted } = useTerminal({
+const {
+  lines, command, busy, flashing, status,
+  boot, submit, recall, complete, hasInteracted
+} = useTerminal({
   onOpenFile: function (name) { emit('open-file', name); }
 });
+
+/* Tab completes a file name, but only when there is something to complete.
+   An empty box lets Tab move focus on, so the keyboard is never trapped
+   here, and Shift and Tab together always leaves. */
+function onTab(event) {
+  if (event.shiftKey || !command.value.trim()) { return; }
+  event.preventDefault();
+  complete();
+}
 
 /* Keep the newest line in view. */
 watch(function () { return lines.value.length; }, async function () {
@@ -33,7 +45,7 @@ onMounted(boot);
   <section class="window window--terminal" aria-label="Terminal">
     <div class="titlebar">
       <span class="titlebar__icon" aria-hidden="true"></span>
-      <h1 class="titlebar__title">Terminal.exe</h1>
+      <p class="titlebar__title">Terminal.exe</p>
       <div class="titlebar__controls" aria-hidden="true">
         <span class="titlebar__btn">_</span>
         <span class="titlebar__btn">&#9633;</span>
@@ -41,11 +53,14 @@ onMounted(boot);
       </div>
     </div>
 
+    <!-- A plain scrollable region rather than a live log: announcing every
+         line would read sixteen lines of git plumbing aloud before reaching
+         anything about Iian. The summary below carries the meaning instead. -->
     <div
       ref="output"
       class="terminal"
-      role="log"
-      aria-live="polite"
+      role="region"
+      tabindex="0"
       aria-label="Terminal output">
       <p v-for="line in lines" :key="line.id" :class="{ 'is-file': line.kind === 'file' }">
         <template v-if="line.kind === 'text'"><span :class="line.tone">{{ line.text }}</span></template>
@@ -54,6 +69,8 @@ onMounted(boot);
         <template v-else><span class="soft">{{ PROMPT }}</span><span class="cursor" aria-hidden="true"></span></template>
       </p>
     </div>
+
+    <p class="sr-only" role="status">{{ status }}</p>
 
     <div class="promptbar">
       <label class="sr-only" for="command-input">Type a command</label>
@@ -68,7 +85,10 @@ onMounted(boot);
         autocorrect="off"
         spellcheck="false"
         :disabled="busy"
-        @keydown.enter.prevent="submit">
+        @keydown.enter.prevent="submit"
+        @keydown.up.prevent="recall(-1)"
+        @keydown.down.prevent="recall(1)"
+        @keydown.tab="onTab">
       <button
         class="promptbar__button"
         :class="{ 'is-flashing': flashing }"

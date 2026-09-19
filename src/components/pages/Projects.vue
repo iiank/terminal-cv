@@ -1,13 +1,23 @@
 <script setup>
+import { ref } from 'vue';
 import data from '../../data/projects.json';
 import { toLines } from '../../utils/toLines.js';
 
 const projects = data.projects;
 
+/* Repositories whose preview card failed to load: renamed, made private,
+   or the endpoint refused. The text link below stays either way, so the
+   output cell never shows a broken image. */
+const missingPreview = ref({});
+
 /* GitHub's OpenGraph endpoint returns the same card shown when a repository
    link is shared, so the cell output looks like a rendered embed. */
 function previewUrl(repo) {
   return 'https://opengraph.githubassets.com/1/' + repo;
+}
+
+function onPreviewError(repo) {
+  missingPreview.value = { ...missingPreview.value, [repo]: true };
 }
 </script>
 
@@ -39,6 +49,7 @@ function previewUrl(repo) {
           ></a>
 
           <a
+            v-if="!missingPreview[project.repo]"
             class="cell__preview"
             :href="'https://github.com/' + project.repo"
             target="_blank"
@@ -47,8 +58,9 @@ function previewUrl(repo) {
             aria-hidden="true"
           ><img
             :src="previewUrl(project.repo)"
-            :alt="'Repository card for ' + project.repo"
+            alt=""
             loading="lazy"
+            @error="onPreviewError(project.repo)"
           ></a>
         </div>
       </div>

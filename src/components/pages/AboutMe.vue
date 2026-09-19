@@ -75,10 +75,19 @@ const sourceLines = buildLines();
 const codeEl = ref(null);
 const columns = ref(70);
 let observer = null;
+let lastWidth = 0;
 
 function measure() {
   const el = codeEl.value;
   if (!el) { return; }
+
+  /* Re-wrapping changes the height, which can make the viewer's scrollbar
+     appear and take a few pixels of width back, which would re-trigger the
+     observer. Ignoring sub-pixel width changes, and any change in height
+     alone, stops that loop. The stable scrollbar gutter in the stylesheet
+     removes the underlying cause. */
+  if (Math.abs(el.clientWidth - lastWidth) < 2) { return; }
+  lastWidth = el.clientWidth;
 
   const probe = document.createElement('span');
   probe.textContent = '0'.repeat(50);

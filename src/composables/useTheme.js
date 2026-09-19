@@ -1,5 +1,3 @@
-/* Shared light switch state. Stores the choice, falls back to the OS. */
-
 import { ref, watchEffect } from 'vue';
 
 const STORAGE_KEY = 'terminal-cv-theme';
