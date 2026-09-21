@@ -3,7 +3,7 @@
   "pages": [
     { "file": "about_me.md",      "updated": "19-09-2026", "note": "Updated iiank.exe to version 19.09.26 patch 3a" },
     { "file": "experiences.json", "updated": "19-09-2026", "note": "Updated relevant experiences" },
-    { "file": "projects.ipynb",   "updated": "21-09-2026", "note": "Added new projects" },
+    { "file": "projects.ipynb",   "updated": "22-09-2026", "note": "Added new projects" },
     { "file": "contact.txt",      "updated": "13-09-2026", "note": "Updated links" }
   ]
 }

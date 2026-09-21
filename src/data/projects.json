@@ -3,9 +3,7 @@
   "projects": [
     {
       "title": "Agentic AI Machine Learning Pipeline for Big Data Analytics",
-      "body": [
-        "An end-to-end agentic AI pipeline using LangGraph and PySpark to automate data analysis, feature engineering, and model training. Implemented with human-in-the-loop review gates and automated quality checks."
-      ],
+      "body": "An end-to-end agentic AI pipeline using LangGraph and PySpark to automate data analysis, feature engineering, and model training. Implemented with human-in-the-loop review gates and automated quality checks.",
       "repo": "iiank/Agentic-AI-for-Big-Data-Analytics"
     },
     {
@@ -17,6 +15,11 @@
       "title": "TikTok TechJam 2026",
       "body": "A conversational AI shopping assistant combining keyword and semantic search, cross-encoder reranking, and weighted entropy to personalise recommendations and guide follow-up questions across a catalogue of 50,000 products.",
       "repo": "iiank/The-Outliers-TikTok-TechJam-2026"
+    },
+    {
+      "title": "Terminal CV",
+      "body": "An interactive portfolio built with Vue and Vite, recreating a Windows command prompt with simulated Git commands, clickable files, persistent themes, and automated deployment through GitHub Pages.",
+      "repo": "iiank/terminal-cv"
     },
     {
       "title": "NUS SDSS Datathon 2026",
