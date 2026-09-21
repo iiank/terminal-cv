@@ -4,8 +4,7 @@
     {
       "title": "Agentic AI Machine Learning Pipeline for Big Data Analytics",
       "body": [
-        "An end-to-end agentic AI pipeline using LangGraph and PySpark to automate data analysis, feature engineering, and model training.",
-        "Implemented with human-in-the-loop review gates and automated quality checks."
+        "An end-to-end agentic AI pipeline using LangGraph and PySpark to automate data analysis, feature engineering, and model training. Implemented with human-in-the-loop review gates and automated quality checks."
       ],
       "repo": "iiank/Agentic-AI-for-Big-Data-Analytics"
     },
@@ -16,18 +15,13 @@
     },
     {
       "title": "TikTok TechJam 2026",
-      "body": "Blah blah blah",
+      "body": "A conversational AI shopping assistant combining keyword and semantic search, cross-encoder reranking, and weighted entropy to personalise recommendations and guide follow-up questions across a catalogue of 50,000 products.",
       "repo": "iiank/The-Outliers-TikTok-TechJam-2026"
     },
     {
-      "title": "NUS Datathon 2026",
-      "body": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "title": "NUS SDSS Datathon 2026",
+      "body": "A prototype analytics pipeline using K-means and hierarchical clustering to segment applicants, analyse employer attractiveness survey responses, and generate LLM summaries to inform employer branding and survery design.",
       "repo": "iiank/NUS-SDSS-Datathon-2026-Team-The-Outliers"
-    },
-    {
-      "title": "NUS SDSS Datathon 2025",
-      "body": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "repo": "iiank/terminal-cv"
     }
   ]
 }

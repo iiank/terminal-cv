@@ -1,9 +1,9 @@
 {
   "reviewAfterDays": 90,
   "pages": [
-    { "file": "about_me.md",      "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "experiences.json", "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "projects.ipynb",   "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." },
-    { "file": "contact.txt",      "updated": "10-09-2026", "note": "Lorem ipsum dolor sit amet." }
+    { "file": "about_me.md",      "updated": "19-09-2026", "note": "Updated iiank.exe to version 19.09.26 patch 3a" },
+    { "file": "experiences.json", "updated": "19-09-2026", "note": "Updated relevant experiences" },
+    { "file": "projects.ipynb",   "updated": "21-09-2026", "note": "Added new projects" },
+    { "file": "contact.txt",      "updated": "13-09-2026", "note": "Updated links" }
   ]
 }
