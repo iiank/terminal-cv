@@ -59,8 +59,7 @@ const builtOn = computed(function () {
 <template>
   <div class="devlog">
     <p class="devlog__banner">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit
-      sed do eiusmod tempor incididunt.
+      When each page on this site was last updated, so you can tell how current the deatils are.
     </p>
 
     <dl class="devlog__summary">
