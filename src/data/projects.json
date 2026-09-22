@@ -23,7 +23,7 @@
     },
     {
       "title": "NUS SDSS Datathon 2026",
-      "body": "A prototype analytics pipeline using K-means and hierarchical clustering to segment applicants, analyse employer attractiveness survey responses, and generate LLM summaries to inform employer branding and survery design.",
+      "body": "A prototype analytics pipeline using K-means and hierarchical clustering to segment applicants, analyse employer attractiveness survey responses, and generate LLM summaries to inform employer branding and survey design.",
       "repo": "iiank/NUS-SDSS-Datathon-2026-Team-The-Outliers"
     }
   ]
