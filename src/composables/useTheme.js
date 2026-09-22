@@ -1,30 +1,22 @@
-import { ref, watchEffect } from 'vue';
+/* Theme state. index.html applies the first theme before paint, so this reads
+   it back rather than working it out a second time. */
 
+import { ref } from 'vue';
+
+/* Must match the key read by the inline script in index.html. */
 const STORAGE_KEY = 'terminal-cv-theme';
 
-function readInitial() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark') { return stored; }
-  } catch (error) {
-    /* Private browsing blocks storage. Fall through to the OS setting. */
-  }
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-}
-
-const theme = ref(readInitial());
-
-watchEffect(() => {
-  document.documentElement.dataset.theme = theme.value;
-});
+const theme = ref(document.documentElement.dataset.theme);
 
 export function useTheme() {
   function toggleTheme() {
     theme.value = theme.value === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = theme.value;
+
     try {
       localStorage.setItem(STORAGE_KEY, theme.value);
     } catch (error) {
-      /* Storage unavailable. The theme still applies for this visit. */
+      /* Storage is blocked, so the choice lasts for this visit only. */
     }
   }
 
