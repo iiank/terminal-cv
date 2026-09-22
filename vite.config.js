@@ -8,8 +8,8 @@ export default defineConfig({
     Icons({ compiler: 'vue3' })
   ],
 
-  // Relative base keeps the build portable: domain root, subfolder
-  // or a GitHub Pages project path all work without further changes.
+  // Relative base keeps the build portable: a domain root, a subfolder or a
+  // GitHub Pages project path all work unchanged.
   base: './',
 
   build: {
@@ -19,7 +19,7 @@ export default defineConfig({
   },
 
   define: {
-    // Stamped in at build time, read by the developer-only page.
+    // Stamped in at build time and shown on last_updated.log.
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
   }
 });

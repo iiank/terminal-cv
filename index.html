@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Applied before the stylesheet paints, so a visitor whose system or saved
-     choice is light mode never sees a dark flash. The storage key must stay in
-     step with STORAGE_KEY in src/composables/useTheme.js. -->
+<!-- Sets the theme before first paint, so light mode never flashes dark.
+     The key must match STORAGE_KEY in src/composables/useTheme.js. -->
 <script>
   (function () {
     var theme = 'dark';
@@ -18,7 +17,7 @@
         theme = 'light';
       }
     } catch (error) {
-      /* Private browsing blocks storage. The dark default still applies. */
+      /* Storage is blocked, so the dark default stands. */
     }
     document.documentElement.dataset.theme = theme;
   }());
@@ -32,9 +31,8 @@
 <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#dcdcdc" media="(prefers-color-scheme: light)">
 
-<!-- Link previews. Replace https://example.com with the deployed address
-     before sharing: LinkedIn, Slack and WhatsApp all discard a relative
-     og:image, so these two must be absolute URLs. -->
+<!-- Link previews. Replace https://example.com with the deployed address:
+     LinkedIn, Slack and WhatsApp ignore a relative og:url or og:image. -->
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Iian Khor">
 <meta property="og:title" content="Iian Khor - Terminal CV">
@@ -49,8 +47,8 @@
 <body>
 <div id="app"></div>
 
-<!-- Everything above renders through JavaScript, so this is what a crawler,
-     a link scraper or a visitor with scripts disabled reads instead. -->
+<!-- The app renders through JavaScript, so crawlers and visitors without
+     scripts read this instead. -->
 <noscript>
   <div class="fallback">
     <h1>Iian Khor</h1>
