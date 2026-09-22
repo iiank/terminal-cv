@@ -1,39 +1,26 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+/* The open file lives in the URL hash, so a page can be linked to directly
+   and the back button closes the viewer rather than leaving the site. */
+
+import { shallowRef, onMounted, onBeforeUnmount } from 'vue';
 import ThemeSwitch from './components/ThemeSwitch.vue';
 import TerminalWindow from './components/TerminalWindow.vue';
 import FileViewer from './components/FileViewer.vue';
 import { getFile } from './files.js';
 
-/* The open file lives in the URL hash, so a page can be linked to directly
-   and the browser back button closes the viewer rather than leaving the
-   site. The hash is the single source of truth; activeFile follows it. */
-const activeFile = ref(null);
+/* Shallow, because the entry holds a component that must not be made reactive. */
+const activeFile = shallowRef(null);
 
-/* Tracks whether this tab pushed the hash itself. If it did, closing can go
-   back a step. If the visitor arrived on a link, going back would leave the
-   site, so the hash is cleared in place instead. */
+/* True when this tab pushed the hash, so closing can step back. A visitor who
+   arrived on a link has nowhere to go back to, so the hash is cleared instead. */
 let pushedHash = false;
 
-const activeComponent = computed(function () {
-  const file = activeFile.value ? getFile(activeFile.value) : null;
-  return file ? file.component : null;
-});
-
-function fileFromHash() {
-  const raw = decodeURIComponent(window.location.hash.replace(/^#/, ''));
-  return raw && getFile(raw) ? raw : null;
-}
-
 function syncFromHash() {
-  const name = fileFromHash();
-  if (!name) { pushedHash = false; }
-  activeFile.value = name;
+  activeFile.value = getFile(decodeURIComponent(window.location.hash.slice(1)));
+  if (!activeFile.value) { pushedHash = false; }
 }
 
 function openFile(name) {
-  if (!getFile(name)) { return; }
-
   pushedHash = true;
   window.location.hash = encodeURIComponent(name);
 }
@@ -45,7 +32,7 @@ function closeFile() {
     return;
   }
 
-  /* replaceState fires no hashchange, so the state is cleared by hand. */
+  /* replaceState fires no hashchange, so the viewer is closed by hand. */
   window.history.replaceState(null, '', window.location.pathname + window.location.search);
   activeFile.value = null;
 }
@@ -61,7 +48,7 @@ onBeforeUnmount(function () {
 </script>
 
 <template>
-  <!-- inert holds the keyboard inside the viewer while a file is open. -->
+  <!-- inert keeps the keyboard inside the viewer while a file is open. -->
   <main class="screen" :inert="activeFile ? true : null">
     <h1 class="sr-only">Iian Khor</h1>
 
@@ -74,9 +61,5 @@ onBeforeUnmount(function () {
     <p class="hint">Type <span>help</span> once the terminal is ready.</p>
   </main>
 
-  <FileViewer
-    v-if="activeFile"
-    :name="activeFile"
-    :view="activeComponent"
-    @close="closeFile" />
+  <FileViewer v-if="activeFile" :file="activeFile" @close="closeFile" />
 </template>

@@ -1,14 +1,18 @@
 <script setup>
 import { ref } from 'vue';
-import data from '../../data/contact.json';
 import { toLines } from '../../utils/toLines.js';
 
-const fields = data.fields;
-const intro = toLines(data.intro);
+const props = defineProps({
+  data: { type: Object, required: true }
+});
+
+const intro = toLines(props.data.intro);
 const note = ref('');
 
-async function copyField(field, event) {
-  const input = event.target.closest('.contact__row').querySelector('input');
+/* Selects the text first so a blocked clipboard still leaves it ready to copy.
+   iOS ignores select() on read-only fields, hence the explicit range. */
+async function copyField(field) {
+  const input = document.getElementById(field.id);
   input.select();
   input.setSelectionRange(0, field.value.length);
 
@@ -27,11 +31,11 @@ async function copyField(field, event) {
       <p v-for="(paragraph, part) in intro" :key="part">{{ paragraph }}</p>
     </div>
 
-    <div v-for="field in fields" :key="field.id" class="contact__field">
+    <div v-for="field in props.data.fields" :key="field.id" class="contact__field">
       <label :for="field.id">{{ field.label }}</label>
       <div class="contact__row">
         <input :id="field.id" type="text" :value="field.value" readonly>
-        <button class="contact__copy" type="button" @click="copyField(field, $event)">Copy</button>
+        <button class="contact__copy" type="button" @click="copyField(field)">Copy</button>
       </div>
     </div>
 

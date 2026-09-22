@@ -1,14 +1,10 @@
-/* Hard-wraps a token line at a given column, breaking on spaces and never
-   splitting a styled chip in half. Because each wrapped row becomes its own
-   line element, the gutter numbers stay in step with what is on screen. */
+/* Hard-wraps a token line at a column count, breaking on spaces. Each row
+   becomes its own line element, so gutter numbers match what is on screen. */
 
 export function wrapTokens(tokens, width) {
-  if (!tokens.length || width < 20) { return [tokens]; }
-
-  /* Continuation rows line up under the text of a bullet or quote
-     rather than under its marker. */
-  const marker = tokens[0].c === 'md-mark' ? tokens[0].t.length : 0;
-  const indent = ' '.repeat(marker);
+  /* Rows after the first indent under a leading `hang` token, such as a list
+     marker or a JSON indent, rather than starting at the margin. */
+  const hang = tokens.length && tokens[0].hang ? tokens[0].t.length : 0;
 
   const rows = [];
   let row = [];
@@ -21,31 +17,40 @@ export function wrapTokens(tokens, width) {
   }
 
   tokens.forEach(function (token) {
-    /* A chip is one unit. Splitting it on its inner space would render
-       each word as a separate bordered box. */
-    const parts = token.c === 'md-code'
-      ? [String(token.t)]
-      : String(token.t).split(/(\s+)/).filter(function (part) { return part !== ''; });
+    /* A chip stays whole and counts two extra columns for its padding and
+       border, so a row of chips never overflows its measured width. */
+    const chip = token.c === 'chip';
+    const parts = chip ? [token.t] : token.t.split(/(\s+)/).filter(Boolean);
 
     parts.forEach(function (part) {
-      if (length + part.length <= width) {
+      const size = chip ? part.length + 2 : part.length;
+
+      if (length + size <= width) {
         row.push({ c: token.c, t: part });
-        length += part.length;
+        length += size;
         return;
       }
 
-      /* A space landing on the break point is dropped, not carried down. */
+      /* A space landing on the break is dropped, not carried down. */
       if (/^\s+$/.test(part)) { return; }
+
+      /* A word wider than the whole row overflows rather than leaving a
+         numbered row that holds nothing but indentation. */
+      if (!row.some(function (item) { return item.t.trim(); })) {
+        row.push({ c: token.c, t: part });
+        length += size;
+        return;
+      }
 
       commit();
 
-      if (marker) {
-        row.push({ t: indent });
-        length = marker;
+      if (hang) {
+        row.push({ t: ' '.repeat(hang) });
+        length = hang;
       }
 
       row.push({ c: token.c, t: part });
-      length += part.length;
+      length += size;
     });
   });
 

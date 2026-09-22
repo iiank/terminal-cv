@@ -1,71 +1,54 @@
 <script setup>
-/* Public change log. Edit src/data/last-updated.json whenever a page
-   changes and the table here updates on the next build. */
+/* Public change log. Edit last-updated.json whenever a page changes and the
+   table follows on the next build. */
 
-import { computed } from 'vue';
-import data from '../../data/last-updated.json';
-
-const buildTime = typeof __BUILD_TIME__ === 'undefined' ? '' : __BUILD_TIME__;
-
-const dateFormat = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit', month: 'short', year: 'numeric'
+const props = defineProps({
+  data: { type: Object, required: true }
 });
 
-/* Dates in last-updated.json are written DD-MM-YYYY. Returns null rather
-   than an Invalid Date, so one bad entry cannot break the whole table. */
+const DAY = 86400000;
+
+const dateFormat = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+/* Dates are written DD-MM-YYYY. A malformed or impossible date, such as
+   31-02-2026, throws so the mistake surfaces during development. */
 function parseDate(value) {
-  const parts = String(value).split('-');
-  if (parts.length !== 3) { return null; }
+  const [day, month, year] = value.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
 
-  const day = Number(parts[0]);
-  const month = Number(parts[1]);
-  const year = Number(parts[2]);
-
-  const parsed = new Date(year, month - 1, day);
-
-  /* Rejects impossible days such as 31-02-2026, which would otherwise
-     silently roll over into the following month. */
-  const valid = parsed.getDate() === day
-    && parsed.getMonth() === month - 1
-    && parsed.getFullYear() === year;
-
-  return valid ? parsed : null;
+  if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+    throw new Error('last-updated.json: "' + value + '" is not a valid DD-MM-YYYY date.');
+  }
+  return date;
 }
 
-const rows = computed(function () {
-  return data.pages.map(function (page) {
-    const date = parseDate(page.updated);
-    const age = date ? Math.floor((Date.now() - date.getTime()) / 86400000) : 0;
+const rows = props.data.pages.map(function (page) {
+  const date = parseDate(page.updated);
+  const age = Math.floor((Date.now() - date.getTime()) / DAY);
 
-    return {
-      file: page.file,
-      note: page.note,
-      age,
-      shown: date ? dateFormat.format(date) : 'unknown',
-      stale: date ? age > data.reviewAfterDays : false
-    };
-  }).sort(function (a, b) { return b.age - a.age; });
-});
+  return {
+    file: page.file,
+    note: page.note,
+    age,
+    shown: dateFormat.format(date),
+    stale: age > props.data.reviewAfterDays
+  };
+}).sort(function (a, b) { return b.age - a.age; });
 
-const oldest = computed(function () { return rows.value.length ? rows.value[0].age : 0; });
-const staleCount = computed(function () { return rows.value.filter(function (row) { return row.stale; }).length; });
-
-const builtOn = computed(function () {
-  if (!buildTime) { return 'not built yet'; }
-  return new Date(buildTime).toLocaleString('en-GB');
-});
+const staleCount = rows.filter(function (row) { return row.stale; }).length;
+const builtOn = new Date(__BUILD_TIME__).toLocaleString('en-GB');
 </script>
 
 <template>
   <div class="devlog">
     <p class="devlog__banner">
-      When each page on this site was last updated, so you can tell how current the deatils are.
+      When each page on this site was last updated, so you can tell how current the details are.
     </p>
 
     <dl class="devlog__summary">
       <div>
         <dt>Oldest page</dt>
-        <dd>{{ oldest }} days</dd>
+        <dd>{{ rows[0].age }} days</dd>
       </div>
       <div>
         <dt>Needs review</dt>
@@ -73,7 +56,7 @@ const builtOn = computed(function () {
       </div>
       <div>
         <dt>Review after</dt>
-        <dd>{{ data.reviewAfterDays }} days</dd>
+        <dd>{{ props.data.reviewAfterDays }} days</dd>
       </div>
       <div>
         <dt>Site deployed</dt>
@@ -100,6 +83,6 @@ const builtOn = computed(function () {
       </tbody>
     </table>
 
-    <p class="devlog__hint">Anything past {{ data.reviewAfterDays }} days is flagged for a rewrite.</p>
+    <p class="devlog__hint">Anything past {{ props.data.reviewAfterDays }} days is flagged for a rewrite.</p>
   </div>
 </template>

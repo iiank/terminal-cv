@@ -1,15 +1,9 @@
-/* =========================================================
-   Terminal CV - single stylesheet
-   Monoscale palette, Consolas throughout.
-   Tokens run from bg (furthest back) to fg (furthest forward),
-   so light mode is a value swap rather than a rewrite.
-   Every fg token clears WCAG AA (4.5:1) against every bg token in both
-   themes, so any text colour may sit on any surface. Check that before
-   darkening fg-3 or fg-2 for looks: fg-3 on bg-3 is the tightest pair.
-   ========================================================= */
+/* Terminal CV stylesheet. bg tokens sit furthest back and fg furthest forward,
+   so light mode is a value swap. Every fg clears WCAG AA on every bg. */
 
 :root,
 [data-theme='dark'] {
+  color-scheme: dark;
   --bg-0: #050505;   /* page                      */
   --bg-1: #0c0c0c;   /* terminal, code surfaces   */
   --bg-2: #151515;   /* panels                    */
@@ -22,9 +16,11 @@
   --fg-0: #e6e6e6;   /* bright text               */
   --icon-file: #ffffff;
   --backdrop: rgba(0, 0, 0, 0.74);
+  --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   --bg-0: #dcdcdc;
   --bg-1: #f7f7f7;
   --bg-2: #ececec;
@@ -35,39 +31,53 @@
   --fg-2: #4e4e4e;
   --fg-1: #3c3c3c;
   --fg-0: #101010;
-  --icon-file: #101010;   /* white would vanish on a light title bar */
+  --icon-file: #101010;
   --backdrop: rgba(0, 0, 0, 0.38);
+  --shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* One type scale for the whole site. Phones raise the root size, so these
+   three steps grow together. */
 :root {
-  --font: Consolas, 'Lucida Console', 'DejaVu Sans Mono', 'Courier New', monospace;
-  --radius: 2px;
+  --font: Consolas, ui-monospace, Menlo, 'DejaVu Sans Mono', 'Liberation Mono', monospace;
+  --text-sm: 0.8rem;
+  --text-md: 0.9rem;
+  --text-lg: 1rem;
   --line: 1.55;
+  --radius: 2px;
 }
 
 * { box-sizing: border-box; }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--bg-0);
-  color: var(--fg-1);
+html {
   font-family: var(--font);
   font-size: 15px;
   line-height: var(--line);
+  color: var(--fg-1);
+  background: var(--bg-0);
+  scrollbar-color: var(--line-2) transparent;
+  touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body { min-height: 100dvh; }
+body { margin: 0; }
 
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+/* Form controls skip inherited fonts and carry engine-specific looks, such
+   as iOS fading disabled text, so they start from the same blank slate. */
+button,
+input {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+}
+
+button { cursor: pointer; }
+
+:disabled {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
 }
 
 :focus-visible {
@@ -75,18 +85,44 @@ body { min-height: 100dvh; }
   outline-offset: 1px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Text tones shared by the terminal and the editor pages. */
+.dim    { color: var(--fg-3); }
+.soft   { color: var(--fg-2); }
+.bright { color: var(--fg-0); }
+.bold   { font-weight: 700; }
+.italic { font-style: italic; }
+
+.chip {
+  padding: 0 4px;
+  color: var(--fg-0);
+  background: var(--bg-3);
+  border: 1px solid var(--line-1);
+}
+
 /* ---------------------------------------------------------
    Layout
    --------------------------------------------------------- */
 
 .screen {
-  width: min(940px, 100%);
-  min-height: 100dvh;
-  margin: 0 auto;
-  padding: clamp(12px, 3.5vw, 44px) clamp(10px, 3vw, 24px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: min(940px, 100%);
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(12px, 3.5vw, 44px) clamp(10px, 3vw, 24px);
 }
 
 .topbar {
@@ -97,7 +133,7 @@ body { min-height: 100dvh; }
 
 .hint {
   margin: 14px 2px 0;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--fg-3);
 }
 
@@ -115,13 +151,12 @@ body { min-height: 100dvh; }
   line-height: 0;
   background: none;
   border: 0;
-  cursor: pointer;
 }
 
 .switch__plate {
   display: block;
-  width: 46px;
-  height: 72px;
+  width: 72px;
+  height: 46px;
   padding: 5px;
   background: var(--bg-3);
   border: 1px solid var(--line-2);
@@ -130,16 +165,15 @@ body { min-height: 100dvh; }
 
 .switch__rocker {
   display: block;
-  width: 100%;
-  height: 30px;
+  width: 50%;
+  height: 100%;
   background: var(--fg-3);
   border: 1px solid var(--line-2);
-  transform: translateY(30px);
   transition: transform 0.16s ease, background-color 0.16s ease;
 }
 
 .switch__plate--on .switch__rocker {
-  transform: translateY(0);
+  transform: translateX(100%);
   background: var(--fg-0);
 }
 
@@ -148,13 +182,13 @@ body { min-height: 100dvh; }
    --------------------------------------------------------- */
 
 .window {
-  background: var(--bg-1);
-  border: 1px solid var(--line-2);
-  border-radius: var(--radius);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--bg-1);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .titlebar {
@@ -164,36 +198,29 @@ body { min-height: 100dvh; }
   padding: 5px 6px 5px 8px;
   background: var(--line-1);
   border-bottom: 1px solid var(--line-2);
+  -webkit-user-select: none;
   user-select: none;
 }
 
 .titlebar__icon {
-  width: 13px;
-  height: 13px;
   flex: none;
-  border: 1px solid var(--fg-2);
+  width: 0.9rem;
+  height: 0.9rem;
   background: var(--bg-1);
+  border: 1px solid var(--fg-2);
 }
 
 .titlebar__icon--file {
-  width: 15px;
-  height: 15px;
+  width: 1.1rem;
+  height: 1.1rem;
   color: var(--icon-file);
   background: none;
   border: 0;
 }
 
-.file-link__icon {
-  width: 1em;
-  height: 1em;
-  margin-right: 5px;
-  vertical-align: -0.15em;
-  color: var(--fg-2);
-}
-
 .titlebar__title {
   margin: 0 auto 0 0;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   font-weight: 400;
   letter-spacing: 0.02em;
   color: var(--fg-0);
@@ -208,18 +235,13 @@ body { min-height: 100dvh; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 19px;
-  font-size: 0.72rem;
+  width: 1.75rem;
+  height: 1.3rem;
+  font-size: var(--text-sm);
   line-height: 1;
   color: var(--fg-0);
   background: var(--line-2);
   border: 1px solid var(--fg-3);
-}
-
-.titlebar__btn--action {
-  font-family: var(--font);
-  cursor: pointer;
 }
 
 .titlebar__btn--close:hover,
@@ -228,27 +250,18 @@ body { min-height: 100dvh; }
 }
 
 /* ---------------------------------------------------------
-   Terminal body
+   Terminal
    --------------------------------------------------------- */
 
 .terminal {
   height: clamp(300px, 56vh, 540px);
-  overflow-y: auto;
-  overflow-x: hidden;
   padding: 12px 14px 16px;
-  background: var(--bg-1);
-  color: var(--fg-1);
-  font-size: 0.9rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  font-size: var(--text-md);
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  scrollbar-color: var(--line-2) var(--bg-1);
-}
-
-.terminal::-webkit-scrollbar { width: 12px; }
-.terminal::-webkit-scrollbar-track { background: var(--bg-2); }
-.terminal::-webkit-scrollbar-thumb {
-  background: var(--line-2);
-  border: 2px solid var(--bg-2);
 }
 
 .terminal p {
@@ -258,25 +271,27 @@ body { min-height: 100dvh; }
 
 .terminal p.is-file { padding-left: 8ch; }
 
-.terminal .dim    { color: var(--fg-3); }
-.terminal .soft   { color: var(--fg-2); }
-.terminal .bright { color: var(--fg-0); }
-
 .file-link {
   display: inline-block;
   padding: 0 2px;
-  font: inherit;
   color: var(--fg-0);
   background: none;
   border: 0;
   border-bottom: 1px dashed var(--fg-3);
-  cursor: pointer;
 }
 
 .file-link:hover,
 .file-link:focus-visible {
   background: var(--line-1);
   border-bottom-color: var(--fg-0);
+}
+
+.file-link__icon {
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 6px;
+  vertical-align: -0.2em;
+  color: var(--fg-2);
 }
 
 .cursor {
@@ -286,13 +301,11 @@ body { min-height: 100dvh; }
   margin-left: 1px;
   vertical-align: text-bottom;
   background: var(--fg-0);
-  animation: cursor-blink 1s step-end infinite;
+  animation: blink 1s step-end infinite;
 }
 
-@keyframes cursor-blink {
-  0%   { opacity: 1; }
-  50%  { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes blink {
+  50% { opacity: 0; }
 }
 
 /* ---------------------------------------------------------
@@ -310,9 +323,8 @@ body { min-height: 100dvh; }
 .promptbar__input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 9px 10px;
-  font-family: var(--font);
-  font-size: 0.9rem;
+  padding: 7px 10px;
+  font-size: var(--text-md);
   color: var(--fg-0);
   background: var(--bg-1);
   border: 1px solid var(--line-2);
@@ -322,16 +334,14 @@ body { min-height: 100dvh; }
 .promptbar__input:disabled { color: var(--fg-2); }
 
 .promptbar__button {
-  flex: 0 0 auto;
+  flex: none;
   min-width: 92px;
-  padding: 9px 16px;
-  font-family: var(--font);
-  font-size: 0.88rem;
+  padding: 7px 16px;
+  font-size: var(--text-md);
   color: var(--fg-0);
   background: var(--line-1);
   border: 1px solid var(--fg-3);
   border-radius: var(--radius);
-  cursor: pointer;
 }
 
 .promptbar__button:hover:not(:disabled) { background: var(--line-2); }
@@ -346,17 +356,18 @@ body { min-height: 100dvh; }
   cursor: not-allowed;
 }
 
+/* Blinks in steps like the cursor, so the browser repaints twice a cycle
+   rather than on every frame. */
 .promptbar__button.is-flashing {
-  animation: flash 1.05s ease-in-out infinite;
+  animation: flash 1.05s step-end infinite;
 }
 
 @keyframes flash {
-  0%, 100% { background: var(--line-1); border-color: var(--fg-3); color: var(--fg-0); }
-  50%      { background: var(--fg-0); border-color: var(--fg-0); color: var(--bg-1); }
+  50% { color: var(--bg-1); background: var(--fg-0); border-color: var(--fg-0); }
 }
 
 /* ---------------------------------------------------------
-   File viewer overlay
+   File viewer
    --------------------------------------------------------- */
 
 .viewer {
@@ -375,63 +386,56 @@ body { min-height: 100dvh; }
   background: var(--backdrop);
 }
 
+/* 100% of the viewer, not a vh value, so the close button stays on screen
+   under a mobile browser's toolbars. */
 .window--viewer {
   position: relative;
   width: min(860px, 100%);
-  max-height: min(88vh, 760px);
+  max-height: min(760px, 100%);
   background: var(--bg-2);
 }
 
+/* The stable gutter stops about_me.md re-wrapping when a scrollbar appears. */
 .viewer__body {
   overflow: auto;
-  /* Reserves the scrollbar's width whether or not it is showing, so the
-     measured column count in about_me.md cannot oscillate as the wrapped
-     content grows past the height of the window. */
+  overscroll-behavior: contain;
   scrollbar-gutter: stable;
-  background: var(--bg-2);
 }
 
 /* ---------------------------------------------------------
-   about_me.md
+   Editor pages: about_me.md, experiences.json
    --------------------------------------------------------- */
-
-.editor { display: flex; flex-direction: column; }
 
 .editor__tabs {
   display: flex;
-  overflow-x: auto;
   background: var(--bg-3);
   border-bottom: 1px solid var(--line-1);
 }
 
 .editor__tab {
   padding: 8px 14px;
-  font-size: 0.8rem;
-  color: var(--fg-3);
-  white-space: nowrap;
-  border-right: 1px solid var(--line-1);
-}
-
-.editor__tab--active {
+  font-size: var(--text-sm);
   color: var(--fg-0);
+  white-space: nowrap;
   background: var(--bg-1);
   border-top: 1px solid var(--fg-2);
+  border-right: 1px solid var(--line-1);
 }
 
 .editor__code {
   counter-reset: line;
   padding: 14px 14px 20px 0;
-  background: var(--bg-1);
-  font-size: 0.86rem;
   overflow-x: auto;
+  font-size: var(--text-md);
+  background: var(--bg-1);
 }
 
 .editor__code .line {
   counter-increment: line;
+  position: relative;
+  min-height: 1.55em;
   margin: 0;
   padding-left: 62px;
-  min-height: 1.55em;
-  position: relative;
   white-space: pre-wrap;
 }
 
@@ -444,22 +448,11 @@ body { min-height: 100dvh; }
   color: var(--fg-3);
 }
 
-.md-hash  { color: var(--fg-3); }
-.md-head  { color: var(--fg-0); font-weight: 700; }
-.md-mark  { color: var(--fg-3); }
-.md-quote { color: var(--fg-2); font-style: italic; }
-.md-code  {
-  padding: 0 4px;
-  color: var(--fg-0);
-  background: var(--bg-3);
-  border: 1px solid var(--line-1);
-}
-
 .editor__status {
   display: flex;
   gap: 18px;
   padding: 6px 14px;
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   color: var(--fg-2);
   background: var(--bg-3);
   border-top: 1px solid var(--line-1);
@@ -486,7 +479,7 @@ body { min-height: 100dvh; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--fg-0);
   background: var(--line-1);
   border: 1px solid var(--line-2);
@@ -494,22 +487,22 @@ body { min-height: 100dvh; }
 
 .profile__name {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
   color: var(--fg-0);
 }
 
-.profile__tagline + .profile__tagline { margin-top: 0; }
-
 .profile__tagline {
   margin: 3px 0 0;
-  font-size: 0.85rem;
+  font-size: var(--text-md);
   color: var(--fg-2);
   max-width: 60ch;
 }
 
+.profile__tagline + .profile__tagline { margin-top: 0; }
+
 .profile__meta {
   margin: 6px 0 0;
-  font-size: 0.76rem;
+  font-size: var(--text-sm);
   color: var(--fg-3);
 }
 
@@ -531,20 +524,20 @@ body { min-height: 100dvh; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--fg-1);
   background: var(--bg-3);
   border: 1px solid var(--line-1);
 }
 
-.role__title { margin: 0; font-size: 0.94rem; color: var(--fg-0); }
-.role__org   { margin: 2px 0 0; font-size: 0.84rem; color: var(--fg-1); }
-.role__dates { margin: 2px 0 0; font-size: 0.78rem; color: var(--fg-3); }
+.role__title { margin: 0; font-size: var(--text-lg); color: var(--fg-0); }
+.role__org   { margin: 2px 0 0; font-size: var(--text-md); color: var(--fg-1); }
+.role__dates { margin: 2px 0 0; font-size: var(--text-sm); color: var(--fg-3); }
 
 .role__points {
   margin: 10px 0 0;
   padding-left: 18px;
-  font-size: 0.84rem;
+  font-size: var(--text-md);
   color: var(--fg-2);
   max-width: 68ch;
 }
@@ -560,7 +553,7 @@ body { min-height: 100dvh; }
 
 .role__tags span {
   padding: 2px 8px;
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   color: var(--fg-1);
   background: var(--bg-3);
   border: 1px solid var(--line-1);
@@ -570,33 +563,72 @@ body { min-height: 100dvh; }
    projects.ipynb
    --------------------------------------------------------- */
 
-.notebook { padding: 0 0 24px; }
+.notebook { padding-bottom: 24px; }
 
 .notebook__toolbar {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px clamp(12px, 3vw, 22px);
-  font-size: 0.78rem;
-  color: var(--fg-2);
+  align-items: center;
+  gap: 4px;
+  padding: 0 clamp(8px, 2vw, 16px);
+  font-size: var(--text-sm);
+  color: var(--fg-1);
   background: var(--bg-3);
   border-bottom: 1px solid var(--line-1);
 }
 
-.notebook__kernel { color: var(--fg-3); }
+/* Actions that do not fit wrap onto a second row, which is clipped, so a
+   narrow window drops whole buttons behind the '...' rather than squashing. */
+.notebook__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  height: 2.2rem;
+  overflow: hidden;
+}
+
+.notebook__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 2.2rem;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.notebook__icon {
+  flex: none;
+  width: 1.35em;
+  height: 1.35em;
+}
+
+.notebook__divider {
+  width: 1px;
+  height: 1.1rem;
+  margin: 0 4px;
+  background: var(--line-2);
+}
+
+.notebook__kernel {
+  flex: none;
+  margin-left: auto;
+  padding-left: 8px;
+  white-space: nowrap;
+  color: var(--fg-3);
+}
 
 .cell {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: clamp(6px, 1.5vw, 10px);
   padding: 14px clamp(12px, 3vw, 22px) 0;
 }
 
 .cell__marker {
   flex: none;
-  width: 52px;
+  width: 7ch;
   padding-top: 10px;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   text-align: right;
   color: var(--fg-3);
 }
@@ -610,21 +642,25 @@ body { min-height: 100dvh; }
   border-left: 3px solid var(--fg-3);
 }
 
-.cell__title { margin: 0; font-size: 0.92rem; color: var(--fg-0); }
-
-.cell__body {
-  margin: 8px 0 0;
-  font-size: 0.84rem;
-  color: var(--fg-2);
-  max-width: 70ch;
+.cell__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  color: var(--fg-0);
 }
 
-/* Cell output: the link and its rendered repository card. */
+.cell__body {
+  max-width: 70ch;
+  margin: 8px 0 0;
+  font-size: var(--text-md);
+  color: var(--fg-2);
+}
+
+.cell__body + .cell__body { margin-top: 0; }
+
 .cell--output { padding-top: 8px; }
 
 .cell__marker--out {
   padding-top: 2px;
-  font-size: 0.72rem;
   color: var(--fg-2);
 }
 
@@ -635,7 +671,7 @@ body { min-height: 100dvh; }
 
 .cell__repo {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--fg-1);
   text-decoration: none;
   border-bottom: 1px dashed var(--fg-3);
@@ -664,9 +700,6 @@ body { min-height: 100dvh; }
   background: var(--bg-1);
 }
 
-/* Consecutive lines sit flush; the 8px only separates body from title. */
-.cell__body + .cell__body { margin-top: 0; }
-
 /* ---------------------------------------------------------
    contact.txt
    --------------------------------------------------------- */
@@ -675,7 +708,7 @@ body { min-height: 100dvh; }
 
 .contact__intro {
   margin: 0 0 18px;
-  font-size: 0.84rem;
+  font-size: var(--text-md);
   color: var(--fg-2);
 }
 
@@ -686,18 +719,20 @@ body { min-height: 100dvh; }
 .contact__field label {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
   color: var(--fg-2);
 }
 
-.contact__row { display: flex; gap: 8px; }
+.contact__row {
+  display: flex;
+  gap: 8px;
+}
 
 .contact__row input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 9px 10px;
-  font-family: var(--font);
-  font-size: 0.86rem;
+  padding: 7px 10px;
+  font-size: var(--text-md);
   color: var(--fg-0);
   background: var(--bg-1);
   border: 1px solid var(--line-2);
@@ -705,29 +740,27 @@ body { min-height: 100dvh; }
 }
 
 .contact__copy {
-  flex: 0 0 auto;
-  padding: 9px 14px;
-  font-family: var(--font);
-  font-size: 0.82rem;
+  flex: none;
+  padding: 7px 14px;
+  font-size: var(--text-md);
   color: var(--fg-0);
   background: var(--line-1);
   border: 1px solid var(--fg-3);
   border-radius: var(--radius);
-  cursor: pointer;
 }
 
 .contact__copy:hover,
 .contact__copy:focus-visible { background: var(--line-2); }
 
 .contact__note {
-  margin: 6px 0 0;
   min-height: 1.2em;
-  font-size: 0.78rem;
+  margin: 6px 0 0;
+  font-size: var(--text-sm);
   color: var(--fg-2);
 }
 
 /* ---------------------------------------------------------
-   last_updated.log (developer only)
+   last_updated.log
    --------------------------------------------------------- */
 
 .devlog { padding: 18px clamp(14px, 3vw, 26px) 26px; }
@@ -735,13 +768,11 @@ body { min-height: 100dvh; }
 .devlog__banner {
   margin: 0 0 16px;
   padding: 8px 10px;
-  font-size: 0.78rem;
+  font-size: var(--text-sm);
   color: var(--fg-1);
   background: var(--bg-3);
   border: 1px dashed var(--line-2);
 }
-
-.devlog__banner span { color: var(--fg-0); }
 
 .devlog__summary {
   display: grid;
@@ -757,20 +788,20 @@ body { min-height: 100dvh; }
 }
 
 .devlog__summary dt {
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   color: var(--fg-3);
 }
 
 .devlog__summary dd {
   margin: 4px 0 0;
-  font-size: 0.92rem;
+  font-size: var(--text-md);
   color: var(--fg-0);
 }
 
 .devlog__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: var(--text-sm);
 }
 
 .devlog__table th,
@@ -794,14 +825,13 @@ body { min-height: 100dvh; }
 .devlog__flag {
   margin-left: 8px;
   padding: 1px 6px;
-  font-size: 0.7rem;
   color: var(--bg-1);
   background: var(--fg-2);
 }
 
 .devlog__hint {
   margin: 14px 0 0;
-  font-size: 0.74rem;
+  font-size: var(--text-sm);
   color: var(--fg-3);
 }
 
@@ -810,62 +840,60 @@ body { min-height: 100dvh; }
    --------------------------------------------------------- */
 
 @media (max-width: 720px) {
-  html, body { font-size: 14px; }
+  html { font-size: 16px; }
+
+  /* Below 16px, iOS zooms the page into a focused field. */
+  .promptbar__input,
+  .contact__row input { font-size: 1rem; }
 
   .terminal {
     height: clamp(260px, 50vh, 420px);
-    font-size: 0.84rem;
     padding: 10px 11px 14px;
   }
 
-  .switch__plate { width: 38px; height: 60px; }
-  .switch__rocker { height: 25px; transform: translateY(24px); }
-  .switch__plate--on .switch__rocker { transform: translateY(0); }
+  .titlebar__btn {
+    width: 2.25rem;
+    height: 1.75rem;
+    font-size: var(--text-md);
+  }
 
-  .editor__code { font-size: 0.8rem; }
   .editor__code .line { padding-left: 46px; }
   .editor__code .line::before { width: 30px; }
 
   .profile__header { gap: 10px; }
-  .profile__avatar { width: 46px; height: 46px; font-size: 0.95rem; }
-
-  .cell { gap: 6px; }
-  .cell__marker { width: 34px; font-size: 0.74rem; }
-
-  .devlog__table { font-size: 0.76rem; }
+  .profile__avatar { width: 46px; height: 46px; }
 }
 
 @media (max-width: 430px) {
-  .promptbar { padding: 7px; gap: 6px; }
-  .promptbar__button { min-width: 68px; padding: 9px 10px; }
+  .promptbar { gap: 6px; padding: 7px; }
+  .promptbar__button { min-width: 68px; padding: 7px 10px; }
   .titlebar__btn:not(.titlebar__btn--close) { display: none; }
-  .contact__copy { padding: 9px 10px; }
+  .contact__copy { padding: 7px 10px; }
 }
 
+/* The caret and the Enter prompt stay visible, they just stop blinking. */
 @media (prefers-reduced-motion: reduce) {
-  /* The caret stays visible, it just stops flashing. */
   .cursor { animation: none; }
 
   .promptbar__button.is-flashing {
     animation: none;
-    background: var(--fg-0);
     color: var(--bg-1);
+    background: var(--fg-0);
     border-color: var(--fg-0);
   }
+
   * { transition: none !important; }
 }
 
 /* ---------------------------------------------------------
-   No-JavaScript fallback
-   Everything else on the page is rendered by Vue, so this is
-   the whole site for a crawler or a blocked script.
+   No-JavaScript fallback, the whole site for crawlers
    --------------------------------------------------------- */
 
 .fallback {
   width: min(680px, 100%);
   margin: 0 auto;
   padding: clamp(20px, 5vw, 48px) clamp(14px, 4vw, 28px);
-  color: var(--fg-1);
+  font-size: var(--text-md);
 }
 
 .fallback h1 {
@@ -877,21 +905,19 @@ body { min-height: 100dvh; }
 
 .fallback h2 {
   margin: 24px 0 8px;
-  font-size: 0.95rem;
+  font-size: var(--text-lg);
   font-weight: 400;
   color: var(--fg-0);
 }
 
 .fallback p {
-  margin: 10px 0 0;
-  font-size: 0.88rem;
   max-width: 62ch;
+  margin: 10px 0 0;
 }
 
 .fallback ul {
   margin: 0;
   padding-left: 18px;
-  font-size: 0.88rem;
 }
 
 .fallback li { margin-bottom: 4px; }

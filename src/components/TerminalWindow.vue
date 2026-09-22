@@ -11,31 +11,29 @@ const inputEl = ref(null);
 const {
   lines, command, busy, flashing, status,
   boot, submit, recall, complete, hasInteracted
-} = useTerminal({
-  onOpenFile: function (name) { emit('open-file', name); }
-});
+} = useTerminal(function (name) { emit('open-file', name); });
 
-/* Tab completes a file name, but only when there is something to complete.
-   An empty box lets Tab move focus on, so the keyboard is never trapped
-   here, and Shift and Tab together always leaves. */
+const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+/* Tab completes only when there is something to complete, so an empty box
+   still lets Tab and Shift+Tab move focus on. */
 function onTab(event) {
   if (event.shiftKey || !command.value.trim()) { return; }
   event.preventDefault();
   complete();
 }
 
-/* Keep the newest line in view. */
 watch(function () { return lines.value.length; }, async function () {
   await nextTick();
-  if (output.value) { output.value.scrollTop = output.value.scrollHeight; }
+  output.value.scrollTop = output.value.scrollHeight;
 });
 
-/* Return the caret to the box once a command finishes, but never before the
-   visitor has tapped anything, so mobile keyboards stay shut on arrival. */
+/* Returns the caret once a command finishes, but only with a mouse and after
+   the first interaction, so a phone keyboard never opens by itself. */
 watch(busy, async function (value) {
-  if (value || !hasInteracted()) { return; }
+  if (value || !finePointer || !hasInteracted()) { return; }
   await nextTick();
-  if (inputEl.value) { inputEl.value.focus({ preventScroll: true }); }
+  inputEl.value.focus({ preventScroll: true });
 });
 
 onMounted(boot);
@@ -53,9 +51,8 @@ onMounted(boot);
       </div>
     </div>
 
-    <!-- A plain scrollable region rather than a live log: announcing every
-         line would read sixteen lines of git plumbing aloud before reaching
-         anything about Iian. The summary below carries the meaning instead. -->
+    <!-- Deliberately not a live region: the status line below announces one
+         summary instead of every line of git output. -->
     <div
       ref="output"
       class="terminal"
@@ -84,6 +81,7 @@ onMounted(boot);
         autocapitalize="off"
         autocorrect="off"
         spellcheck="false"
+        enterkeyhint="go"
         :disabled="busy"
         @keydown.enter.prevent="submit"
         @keydown.up.prevent="recall(-1)"

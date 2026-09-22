@@ -1,16 +1,10 @@
-/* Lets any text field in the JSON be a single string or an array of
-   strings. An array renders one line per entry, so content can break
-   where it is written rather than only where the box happens to wrap. */
+/* Lets a text field in the JSON be one string or an array of strings, one line
+   each. A nested array joins with spaces, so long sentences can span lines. */
 
 export function toLines(value) {
-  if (value === undefined || value === null) { return []; }
-
   return [].concat(value)
     .map(function (entry) {
-      if (Array.isArray(entry)) {
-        return entry.map(function (part) { return String(part).trim(); }).join(' ');
-      }
-      return String(entry);
+      return Array.isArray(entry) ? entry.map(function (part) { return part.trim(); }).join(' ') : entry;
     })
-    .filter(function (line) { return line.length > 0; });
+    .filter(Boolean);
 }

@@ -1,36 +1,36 @@
 <script setup>
-/* Content lives in src/data/about-me.json. This component turns it into
-   token lines so the markdown can be tinted without raw HTML. */
+/* Renders about-me.json as markdown source in an editor window. Lines are
+   wrapped at the column that fits, so every row keeps its own line number. */
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import data from '../../data/about-me.json';
 import { toLines } from '../../utils/toLines.js';
 import { wrapTokens } from '../../utils/wrapTokens.js';
 
-/* A stack group is two lines: the label, then its chips indented beneath.
-   The indent token is marked md-mark so wrapTokens treats it as a marker
-   and keeps wrapped rows aligned under the first chip. */
+const props = defineProps({
+  data: { type: Object, required: true }
+});
+
+/* A stack group is its label, then its chips indented on the line beneath. */
 function stackLines(label, items) {
-  const chips = [{ c: 'md-mark', t: '    ' }];
+  const chips = [{ c: 'dim', t: '    ', hang: true }];
 
   items.forEach(function (item, index) {
     if (index) { chips.push({ t: ' ' }); }
-    chips.push({ c: 'md-code', t: item });
+    chips.push({ c: 'chip', t: item });
   });
 
-  return [
-    [{ c: 'md-mark', t: '- ' }, { t: label + ':' }],
-    chips
-  ];
+  return [[{ c: 'dim', t: '- ', hang: true }, { t: label + ':' }], chips];
 }
 
-function buildLines() {
+/* Markers carry `hang`, so wrapped rows line up under the text rather than
+   under the marker. */
+function buildLines(data) {
   const out = [];
 
   data.sections.forEach(function (section, index) {
     if (index) { out.push([]); }
 
-    out.push([{ c: 'md-hash', t: '# ' }, { c: 'md-head', t: section.heading }]);
+    out.push([{ c: 'dim', t: '# ' }, { c: 'bright bold', t: section.heading }]);
     out.push([]);
 
     toLines(section.paragraphs).forEach(function (paragraph) {
@@ -41,26 +41,23 @@ function buildLines() {
     if (quotes.length) {
       out.push([]);
       quotes.forEach(function (quote) {
-        out.push([{ c: 'md-mark', t: '> ' }, { c: 'md-quote', t: quote }]);
+        out.push([{ c: 'dim', t: '> ', hang: true }, { c: 'soft italic', t: quote }]);
       });
     }
 
     if (section.stack) {
       out.push([]);
       section.stack.forEach(function (group) {
-        stackLines(group.label, group.items).forEach(function (line) {
-          out.push(line);
-        });
+        out.push(...stackLines(group.label, group.items));
       });
     }
   });
 
   if (data.footer) {
-    out.push([]);
-    out.push([{ c: 'md-mark', t: '---' }]);
+    out.push([], [{ c: 'dim', t: '---' }]);
     out.push([
       { t: 'Last edited by ' },
-      { c: 'md-code', t: data.footer.editedBy },
+      { c: 'chip', t: data.footer.editedBy },
       { t: ', ' + data.footer.editedAgo + '.' }
     ]);
   }
@@ -68,24 +65,17 @@ function buildLines() {
   return out;
 }
 
-const sourceLines = buildLines();
+const lines = buildLines(props.data);
 
-/* Hard-wrapping happens at the column that actually fits, so every row on
-   screen is a real line with its own number. */
-const codeEl = ref(null);
-const columns = ref(70);
-let observer = null;
+const code = ref(null);
+const columns = ref(80);
+const observer = new ResizeObserver(measure);
 let lastWidth = 0;
 
+/* Height-only changes and sub-pixel jitter are ignored, so a re-wrap that
+   brings in a scrollbar cannot keep triggering itself. */
 function measure() {
-  const el = codeEl.value;
-  if (!el) { return; }
-
-  /* Re-wrapping changes the height, which can make the viewer's scrollbar
-     appear and take a few pixels of width back, which would re-trigger the
-     observer. Ignoring sub-pixel width changes, and any change in height
-     alone, stops that loop. The stable scrollbar gutter in the stylesheet
-     removes the underlying cause. */
+  const el = code.value;
   if (Math.abs(el.clientWidth - lastWidth) < 2) { return; }
   lastWidth = el.clientWidth;
 
@@ -96,44 +86,33 @@ function measure() {
   const charWidth = probe.getBoundingClientRect().width / 50;
   probe.remove();
 
-  if (!charWidth) { return; }
-
-  const sample = el.querySelector('.line');
-  const gutter = sample ? parseFloat(getComputedStyle(sample).paddingLeft) : 62;
-  const available = el.clientWidth - gutter - 16;
-
-  columns.value = Math.max(20, Math.floor(available / charWidth));
+  const line = el.querySelector('.line');
+  const available = line.clientWidth - parseFloat(getComputedStyle(line).paddingLeft);
+  columns.value = Math.max(20, Math.floor((available - 1) / charWidth));
 }
 
-const lines = computed(function () {
-  return sourceLines.flatMap(function (line) { return wrapTokens(line, columns.value); });
+const rows = computed(function () {
+  return lines.flatMap(function (line) { return wrapTokens(line, columns.value); });
 });
 
-onMounted(function () {
-  measure();
-  observer = new ResizeObserver(measure);
-  observer.observe(codeEl.value);
-});
-
-onBeforeUnmount(function () {
-  if (observer) { observer.disconnect(); }
-});
+onMounted(function () { observer.observe(code.value); });
+onBeforeUnmount(function () { observer.disconnect(); });
 </script>
 
 <template>
   <div class="editor">
     <div class="editor__tabs">
-      <span class="editor__tab editor__tab--active">about_me.md</span>
+      <span class="editor__tab">about_me.md</span>
     </div>
 
-    <div ref="codeEl" class="editor__code">
-      <p v-for="(line, index) in lines" :key="index" class="line"><span v-for="(token, part) in line" :key="part" :class="token.c">{{ token.t }}</span></p>
+    <div ref="code" class="editor__code">
+      <p v-for="(row, index) in rows" :key="index" class="line"><span v-for="(token, part) in row" :key="part" :class="token.c">{{ token.t }}</span></p>
     </div>
 
     <div class="editor__status">
       <span>Markdown</span>
       <span>UTF-8</span>
-      <span>Ln {{ lines.length }}, Col 1</span>
+      <span>Ln {{ rows.length }}, Col 1</span>
     </div>
   </div>
 </template>

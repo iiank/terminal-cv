@@ -1,4 +1,5 @@
-/* The files the terminal knows about. One component per page. */
+/* Every file the terminal can open, in listing order. Each pairs a page with
+   the data it renders; git pull also counts that data's lines as insertions. */
 
 import AboutMe from './components/pages/AboutMe.vue';
 import Experiences from './components/pages/Experiences.vue';
@@ -6,36 +7,24 @@ import Projects from './components/pages/Projects.vue';
 import Contact from './components/pages/Contact.vue';
 import LastUpdated from './components/pages/LastUpdated.vue';
 
-const registry = new Map();
+import aboutMe from './data/about-me.json';
+import experiences from './data/experiences.json';
+import projects from './data/projects.json';
+import contact from './data/contact.json';
+import lastUpdated from './data/last-updated.json';
 
-/**
- * @param {string} name      file name shown in the terminal
- * @param {object} component Vue component rendered in the viewer
- * @param {object} options   listed: false hides it from dir and git status
- */
-export function registerFile(name, component, options = {}) {
-  registry.set(name, {
-    name,
-    component,
-    listed: options.listed !== false
-  });
-}
+const FILES = [
+  { name: 'about_me.md', component: AboutMe, data: aboutMe },
+  { name: 'experiences.json', component: Experiences, data: experiences },
+  { name: 'projects.ipynb', component: Projects, data: projects },
+  { name: 'contact.txt', component: Contact, data: contact },
+  { name: 'last_updated.log', component: LastUpdated, data: lastUpdated }
+];
 
 export function getFile(name) {
-  return registry.get(name) || null;
+  return FILES.find(function (file) { return file.name === name; });
 }
 
-/** Public files, in registration order. */
-export function listedFiles() {
-  return [...registry.values()].filter((file) => file.listed).map((file) => file.name);
+export function fileNames() {
+  return FILES.map(function (file) { return file.name; });
 }
-
-export function allFiles() {
-  return [...registry.keys()];
-}
-
-registerFile('about_me.md', AboutMe);
-registerFile('experiences.json', Experiences);
-registerFile('projects.ipynb', Projects);
-registerFile('contact.txt', Contact);
-registerFile('last_updated.log', LastUpdated);

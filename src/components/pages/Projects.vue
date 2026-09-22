@@ -1,34 +1,57 @@
 <script setup>
-import { ref } from 'vue';
-import data from '../../data/projects.json';
+import { reactive } from 'vue';
+import RunAllIcon from '~icons/mdi/fast-forward';
+import RestartIcon from '~icons/mdi/restart';
+import ClearOutputsIcon from '~icons/mdi/notification-clear-all';
 import { toLines } from '../../utils/toLines.js';
 
-const projects = data.projects;
+const props = defineProps({
+  data: { type: Object, required: true }
+});
 
-/* Repositories whose preview card failed to load: renamed, made private,
-   or the endpoint refused. The text link below stays either way, so the
-   output cell never shows a broken image. */
-const missingPreview = ref({});
+/* Decorative Jupyter toolbar with no behaviour. '|' draws a divider; the '...'
+   after it stands for actions a narrow window has no room to show. */
+const ACTIONS = [
+  { label: '+ Code' },
+  { label: '+ Markdown' },
+  { label: '|' },
+  { label: 'Run All', icon: RunAllIcon },
+  { label: 'Restart', icon: RestartIcon },
+  { label: 'Clear All Outputs', icon: ClearOutputsIcon },
+  { label: '|' }
+];
 
-/* GitHub's OpenGraph endpoint returns the same card shown when a repository
-   link is shared, so the cell output looks like a rendered embed. */
-function previewUrl(repo) {
-  return 'https://opengraph.githubassets.com/1/' + repo;
+/* Repositories whose GitHub card failed to load. The text link stays, so a
+   renamed or private repository never shows a broken image. */
+const missingPreview = reactive(new Set());
+
+function repoUrl(repo) {
+  return 'https://github.com/' + repo;
 }
 
-function onPreviewError(repo) {
-  missingPreview.value = { ...missingPreview.value, [repo]: true };
+/* GitHub's OpenGraph endpoint returns the card shown when a repository link
+   is shared, so the cell output looks like a rendered embed. */
+function previewUrl(repo) {
+  return 'https://opengraph.githubassets.com/1/' + repo;
 }
 </script>
 
 <template>
   <div class="notebook">
-    <div class="notebook__toolbar">
-      <span>projects.ipynb</span>
-      <span class="notebook__kernel">{{ data.kernel }}</span>
+    <div class="notebook__toolbar" aria-hidden="true">
+      <div class="notebook__actions">
+        <template v-for="(action, index) in ACTIONS" :key="index">
+          <span v-if="action.label === '|'" class="notebook__divider"></span>
+          <span v-else class="notebook__action">
+            <component :is="action.icon" v-if="action.icon" class="notebook__icon" />{{ action.label }}
+          </span>
+        </template>
+      </div>
+      <span class="notebook__action">...</span>
+      <span class="notebook__kernel">{{ props.data.kernel }}</span>
     </div>
 
-    <template v-for="(project, index) in projects" :key="project.title">
+    <template v-for="(project, index) in props.data.projects" :key="project.title">
       <div class="cell">
         <div class="cell__marker">[{{ index + 1 }}]</div>
         <div class="cell__box">
@@ -40,28 +63,21 @@ function onPreviewError(repo) {
       <div v-if="project.repo" class="cell cell--output">
         <div class="cell__marker cell__marker--out">Out[{{ index + 1 }}]</div>
         <div class="cell__result">
-          <a
-            class="cell__repo"
-            :href="'https://github.com/' + project.repo"
-            target="_blank"
-            rel="noopener noreferrer"
-            v-text="'github.com/' + project.repo"
-          ></a>
+          <a class="cell__repo" :href="repoUrl(project.repo)" target="_blank" rel="noopener noreferrer">github.com/{{ project.repo }}</a>
 
           <a
-            v-if="!missingPreview[project.repo]"
+            v-if="!missingPreview.has(project.repo)"
             class="cell__preview"
-            :href="'https://github.com/' + project.repo"
+            :href="repoUrl(project.repo)"
             target="_blank"
             rel="noopener noreferrer"
             tabindex="-1"
-            aria-hidden="true"
-          ><img
-            :src="previewUrl(project.repo)"
-            alt=""
-            loading="lazy"
-            @error="onPreviewError(project.repo)"
-          ></a>
+            aria-hidden="true"><img
+              :src="previewUrl(project.repo)"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              @error="missingPreview.add(project.repo)"></a>
         </div>
       </div>
     </template>

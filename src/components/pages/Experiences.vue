@@ -1,9 +1,12 @@
 <script setup>
-import data from '../../data/experiences.json';
 import { toLines } from '../../utils/toLines.js';
 
-const profile = data.profile;
-const roles = data.roles;
+const props = defineProps({
+  data: { type: Object, required: true }
+});
+
+const profile = props.data.profile;
+const roles = props.data.roles;
 </script>
 
 <template>

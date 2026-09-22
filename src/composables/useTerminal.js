@@ -1,15 +1,13 @@
-/* All terminal behaviour: boot sequence, printing and commands.
-   Kept out of the component so the markup stays readable. */
+/* Terminal behaviour: boot sequence, printing and commands. Kept out of the
+   component so the markup stays readable. */
 
 import { ref } from 'vue';
-import { listedFiles, allFiles } from '../files.js';
+import { getFile, fileNames } from '../files.js';
 
 export const PROMPT = 'C:\\Users\\iiankhor>';
 
 const GREETING = ['Hi!', 'My name is Iian!', 'What can I do for you?'];
 
-/* The fetch preamble is fixed; the diff stat below is generated from the
-   registered files so it can never drift when a page is added. */
 const PULL_PREAMBLE = [
   'remote: Enumerating objects: 42, done.',
   'remote: Counting objects: 100% (42/42), done.',
@@ -23,61 +21,49 @@ const PULL_PREAMBLE = [
   'Fast-forward'
 ];
 
-/* Insertions quoted per file. Anything not listed falls back to a figure
-   derived from the name, so a new page still gets a plausible row. */
-const INSERTIONS = {
-  'about_me.md': 24,
-  'experiences.json': 63,
-  'projects.ipynb': 118,
-  'contact.txt': 6,
-  'last_updated.log': 9
-};
-
-const BAR_WIDTH = 34;
-
-function insertionsFor(name) {
-  return INSERTIONS[name] || name.length * 4;
-}
-
-/* Reproduces the shape of a git diff stat: names padded to a common width,
-   counts right aligned, bars scaled against the largest change. */
-function diffStat() {
-  const names = listedFiles();
-  if (!names.length) { return []; }
-
-  const counts = names.map(insertionsFor);
-  const widest = Math.max(...names.map((name) => name.length));
-  const digits = Math.max(...counts.map((count) => String(count).length));
-  const largest = Math.max(...counts);
-
-  const rows = names.map(function (name, index) {
-    const count = counts[index];
-    const bar = '+'.repeat(Math.max(1, Math.round((count / largest) * BAR_WIDTH)));
-    return ' ' + name.padEnd(widest) + ' | ' + String(count).padStart(digits) + ' ' + bar;
-  });
-
-  const total = counts.reduce(function (sum, count) { return sum + count; }, 0);
-  const files = names.length === 1 ? '1 file changed' : names.length + ' files changed';
-  rows.push(' ' + files + ', ' + total + ' insertions(+)');
-
-  return rows;
-}
+/* Longest diff stat bar, in '+' characters. At 10 every row fits on one line
+   of a 360px-wide phone; check that before raising it. */
+const BAR_WIDTH = 10;
 
 const OPEN_VERBS = ['open', 'type', 'cat', 'code'];
 const COMMAND_WORDS = ['git pull origin my-portfolio', 'git status', 'help', 'dir', 'cls', 'exit', 'open '];
 const HISTORY_LIMIT = 50;
 
-export function useTerminal(options = {}) {
-  const onOpenFile = options.onOpenFile || function () {};
+/* Insertions are the lines in each file's data, pretty-printed, so the stat
+   follows the content without hand-kept numbers. */
+function insertions(name) {
+  return JSON.stringify(getFile(name).data, null, 2).split('\n').length;
+}
 
+/* Laid out like git: names padded to one width, counts right aligned and bars
+   scaled against the largest change. */
+function diffStat() {
+  const names = fileNames();
+  const counts = names.map(insertions);
+  const largest = Math.max(...counts);
+  const widest = Math.max(...names.map(function (name) { return name.length; }));
+  const digits = String(largest).length;
+
+  const rows = names.map(function (name, index) {
+    const bar = '+'.repeat(Math.max(1, Math.round((counts[index] / largest) * BAR_WIDTH)));
+    return ' ' + name.padEnd(widest) + ' | ' + String(counts[index]).padStart(digits) + ' ' + bar;
+  });
+
+  const total = counts.reduce(function (sum, count) { return sum + count; }, 0);
+  const changed = names.length === 1 ? '1 file changed' : names.length + ' files changed';
+  rows.push(' ' + changed + ', ' + total + ' insertions(+)');
+
+  return rows;
+}
+
+export function useTerminal(onOpenFile) {
   const lines = ref([]);
   const command = ref('');
   const busy = ref(true);
   const flashing = ref(false);
 
-  /* Read by a visually hidden live region. The terminal itself is not a live
-     region, so a screen reader hears one summary rather than every line of
-     git plumbing as it prints. */
+  /* Read by a hidden live region, so a screen reader hears one summary
+     rather than every line of git output. */
   const status = ref('');
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -105,16 +91,11 @@ export function useTerminal(options = {}) {
   }
 
   function printCommand(text) {
-    push({ kind: 'command', text: text || '' });
+    push({ kind: 'command', text });
   }
 
   function printFile(name) {
     push({ kind: 'file', name });
-  }
-
-  function showCursor() {
-    removeCursor();
-    push({ kind: 'cursor' });
   }
 
   function removeCursor() {
@@ -122,34 +103,31 @@ export function useTerminal(options = {}) {
     if (list.length && list[list.length - 1].kind === 'cursor') { list.pop(); }
   }
 
+  function showCursor() {
+    removeCursor();
+    push({ kind: 'cursor' });
+  }
+
   async function printBlock(block, delay) {
-    for (let i = 0; i < block.length; i += 1) {
-      printText(block[i], 'soft');
+    for (const text of block) {
+      printText(text, 'soft');
       await wait(delay);
     }
   }
 
-  function idle() {
-    showCursor();
-    busy.value = false;
-  }
-
   /* ------------------------------ boot ------------------------------ */
 
+  /* Greets, then types the first command into the box and leaves the
+     visitor to press Enter. */
   async function boot() {
-    busy.value = true;
-
-    for (let i = 0; i < GREETING.length; i += 1) {
-      printText(GREETING[i], 'bright');
+    for (const text of GREETING) {
+      printText(text, 'bright');
       await wait(420);
     }
 
     showCursor();
     await wait(600);
 
-    /* Types the first command into the box, then invites the visitor
-       to press Enter themselves. */
-    command.value = '';
     for (const character of 'git pull origin my-portfolio') {
       command.value += character;
       await wait(55);
@@ -178,9 +156,9 @@ export function useTerminal(options = {}) {
     printText('  (Select the files below to read more!)', 'dim');
     printText('');
 
-    const names = listedFiles();
-    for (let i = 0; i < names.length; i += 1) {
-      printFile(names[i]);
+    const names = fileNames();
+    for (const name of names) {
+      printFile(name);
       await wait(140);
     }
 
@@ -208,19 +186,17 @@ export function useTerminal(options = {}) {
 
   function printFileList() {
     printText('Untracked files in C:\\Users\\iiankhor:', 'soft');
-    listedFiles().forEach(printFile);
+    fileNames().forEach(printFile);
     printText('');
-    status.value = 'Files listed: ' + listedFiles().join(', ') + '.';
+    status.value = 'Files listed: ' + fileNames().join(', ') + '.';
   }
 
-  /* Opening matches every registered file, including any marked
-     listed: false, so a hidden page stays off the lists but can still be
-     reached by anyone who knows its name. */
-  function matchFile(word, pool) {
+  /* Matches a full file name or just its stem, ignoring case. */
+  function matchFile(word) {
     const target = String(word || '').toLowerCase();
     if (!target) { return null; }
 
-    return (pool || allFiles()).find(function (name) {
+    return fileNames().find(function (name) {
       return name.toLowerCase() === target || name.split('.')[0].toLowerCase() === target;
     }) || null;
   }
@@ -270,7 +246,7 @@ export function useTerminal(options = {}) {
 
     const parts = text.split(/\s+/);
     if (OPEN_VERBS.includes(parts[0].toLowerCase())) {
-      const named = parts.length > 1 ? matchFile(parts[1]) : null;
+      const named = matchFile(parts[1]);
       if (named) {
         open(named);
       } else {
@@ -290,15 +266,14 @@ export function useTerminal(options = {}) {
   /* ---------------------------- recall -------------------------------- */
 
   function remember(text) {
-    if (!text) { return; }
-    if (history[history.length - 1] === text) { return; }
+    if (!text || history[history.length - 1] === text) { return; }
 
     history.push(text);
     if (history.length > HISTORY_LIMIT) { history.shift(); }
   }
 
-  /* step of -1 walks back through earlier commands, 1 walks forward.
-     Stepping past the newest entry restores whatever was half typed. */
+  /* -1 steps back through earlier commands, 1 steps forward. Going past the
+     newest entry restores whatever was half typed. */
   function recall(step) {
     if (busy.value || !history.length) { return; }
 
@@ -307,9 +282,8 @@ export function useTerminal(options = {}) {
       historyAt = history.length;
     }
 
-    const target = Math.min(history.length, Math.max(0, historyAt + step));
-    historyAt = target;
-    command.value = target === history.length ? draft : history[target];
+    historyAt = Math.min(history.length, Math.max(0, historyAt + step));
+    command.value = historyAt === history.length ? draft : history[historyAt];
   }
 
   /* ---------------------------- completion ---------------------------- */
@@ -323,14 +297,10 @@ export function useTerminal(options = {}) {
     });
   }
 
-  /* Completes against listed files only, so hidden pages are not revealed
-     by pressing Tab. */
   function complete() {
     if (busy.value) { return; }
 
     const text = command.value;
-    if (!text.trim()) { return; }
-
     const verb = text.match(/^(\w+)(\s+)(.*)$/);
     const useVerb = verb && OPEN_VERBS.includes(verb[1].toLowerCase());
     const stem = useVerb ? verb[3] : text;
@@ -338,7 +308,7 @@ export function useTerminal(options = {}) {
 
     if (!stem) { return; }
 
-    const pool = useVerb ? listedFiles() : listedFiles().concat(COMMAND_WORDS);
+    const pool = useVerb ? fileNames() : fileNames().concat(COMMAND_WORDS);
     const hits = pool.filter(function (name) {
       return name.toLowerCase().startsWith(stem.toLowerCase());
     });
@@ -380,7 +350,8 @@ export function useTerminal(options = {}) {
     command.value = '';
 
     await handle(text);
-    idle();
+    showCursor();
+    busy.value = false;
   }
 
   function hasInteracted() {

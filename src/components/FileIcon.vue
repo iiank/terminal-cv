@@ -1,6 +1,6 @@
 <script setup>
-/* Maps a file name to an icon. Each icon is imported individually, so only
-   the ones listed here end up in the bundle. Add a case when you add a page. */
+/* Maps a file extension to an icon. Icons are imported one by one, so only
+   these reach the bundle; add a case when you add a new file type. */
 
 import { computed } from 'vue';
 import MarkdownIcon from '~icons/mdi/language-markdown';
@@ -14,7 +14,7 @@ const props = defineProps({
   name: { type: String, required: true }
 });
 
-const icons = {
+const ICONS = {
   md: MarkdownIcon,
   json: JsonIcon,
   ipynb: NotebookIcon,
@@ -23,11 +23,10 @@ const icons = {
 };
 
 const icon = computed(function () {
-  const extension = props.name.split('.').pop().toLowerCase();
-  return icons[extension] || FileIcon;
+  return ICONS[props.name.split('.').pop().toLowerCase()] || FileIcon;
 });
 </script>
 
 <template>
-  <component :is="icon" class="fileicon" aria-hidden="true" />
+  <component :is="icon" aria-hidden="true" />
 </template>
