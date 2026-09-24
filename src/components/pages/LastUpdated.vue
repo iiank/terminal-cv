@@ -41,11 +41,11 @@ const builtOn = new Date(__BUILD_TIME__).toLocaleString('en-GB');
 
 <template>
   <div class="devlog">
-    <p class="devlog__banner">
+    <p class="devlog-banner">
       When each page on this site was last updated, so you can tell how current the details are.
     </p>
 
-    <dl class="devlog__summary">
+    <dl class="devlog-summary">
       <div>
         <dt>Oldest page</dt>
         <dd>{{ rows[0].age }} days</dd>
@@ -64,7 +64,7 @@ const builtOn = new Date(__BUILD_TIME__).toLocaleString('en-GB');
       </div>
     </dl>
 
-    <table class="devlog__table">
+    <table class="devlog-table">
       <thead>
         <tr>
           <th scope="col">File</th>
@@ -77,12 +77,12 @@ const builtOn = new Date(__BUILD_TIME__).toLocaleString('en-GB');
         <tr v-for="row in rows" :key="row.file" :class="{ 'is-stale': row.stale }">
           <td>{{ row.file }}</td>
           <td>{{ row.shown }}</td>
-          <td>{{ row.age }}d<span v-if="row.stale" class="devlog__flag">review</span></td>
+          <td>{{ row.age }}d<span v-if="row.stale" class="devlog-flag">review</span></td>
           <td>{{ row.note }}</td>
         </tr>
       </tbody>
     </table>
 
-    <p class="devlog__hint">Anything past {{ props.data.reviewAfterDays }} days is flagged for a rewrite.</p>
+    <p class="devlog-hint">Anything past {{ props.data.reviewAfterDays }} days is flagged for a rewrite.</p>
   </div>
 </template>

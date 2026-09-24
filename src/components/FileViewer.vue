@@ -31,16 +31,16 @@ onBeforeUnmount(function () {
 
 <template>
   <div class="viewer">
-    <div class="viewer__backdrop" @click="emit('close')"></div>
+    <div class="viewer-backdrop" @click="emit('close')"></div>
 
-    <section class="window window--viewer" role="dialog" aria-modal="true" :aria-label="file.name">
+    <section class="window window-viewer" role="dialog" aria-modal="true" :aria-label="file.name">
       <div class="titlebar">
-        <FileIcon class="titlebar__icon titlebar__icon--file" :name="file.name" />
-        <h2 class="titlebar__title">{{ file.name }}</h2>
-        <div class="titlebar__controls">
+        <FileIcon class="titlebar-icon titlebar-icon-file" :name="file.name" />
+        <h2 class="titlebar-title">{{ file.name }}</h2>
+        <div class="titlebar-controls">
           <button
             ref="closeBtn"
-            class="titlebar__btn titlebar__btn--close"
+            class="titlebar-btn titlebar-btn-close"
             type="button"
             aria-label="Close file"
             @click="emit('close')">&times;</button>
@@ -48,7 +48,7 @@ onBeforeUnmount(function () {
       </div>
 
       <!-- Keyed by name, so each file mounts its page afresh. -->
-      <div class="viewer__body">
+      <div class="viewer-body">
         <component :is="file.component" :key="file.name" :data="file.data" />
       </div>
     </section>

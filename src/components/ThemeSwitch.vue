@@ -15,8 +15,8 @@ const isLight = computed(function () { return theme.value === 'light'; });
     :aria-checked="isLight"
     :aria-label="isLight ? 'Switch to dark mode' : 'Switch to light mode'"
     @click="toggleTheme">
-    <span class="switch__plate" :class="{ 'switch__plate--on': isLight }">
-      <span class="switch__rocker"></span>
+    <span class="switch-plate" :class="{ 'switch-plate-on': isLight }">
+      <span class="switch-rocker"></span>
     </span>
   </button>
 </template>

@@ -41,7 +41,7 @@
 :root {
   --font: Consolas, ui-monospace, Menlo, 'DejaVu Sans Mono', 'Liberation Mono', monospace;
   --text-sm: 0.8rem;
-  --text-md: 0.9rem;
+  --text-md: 0.825rem;
   --text-lg: 1rem;
   --line: 1.55;
   --radius: 2px;
@@ -153,17 +153,17 @@ button { cursor: pointer; }
   border: 0;
 }
 
-.switch__plate {
+.switch-plate {
   display: block;
-  width: 72px;
-  height: 46px;
+  width: 60px;
+  height: 30px;
   padding: 5px;
   background: var(--bg-3);
   border: 1px solid var(--line-2);
   border-radius: var(--radius);
 }
 
-.switch__rocker {
+.switch-rocker {
   display: block;
   width: 50%;
   height: 100%;
@@ -172,7 +172,7 @@ button { cursor: pointer; }
   transition: transform 0.16s ease, background-color 0.16s ease;
 }
 
-.switch__plate--on .switch__rocker {
+.switch-plate-on .switch-rocker {
   transform: translateX(100%);
   background: var(--fg-0);
 }
@@ -202,7 +202,7 @@ button { cursor: pointer; }
   user-select: none;
 }
 
-.titlebar__icon {
+.titlebar-icon {
   flex: none;
   width: 0.9rem;
   height: 0.9rem;
@@ -210,7 +210,7 @@ button { cursor: pointer; }
   border: 1px solid var(--fg-2);
 }
 
-.titlebar__icon--file {
+.titlebar-icon-file {
   width: 1.1rem;
   height: 1.1rem;
   color: var(--icon-file);
@@ -218,7 +218,7 @@ button { cursor: pointer; }
   border: 0;
 }
 
-.titlebar__title {
+.titlebar-title {
   margin: 0 auto 0 0;
   font-size: var(--text-sm);
   font-weight: 400;
@@ -226,12 +226,12 @@ button { cursor: pointer; }
   color: var(--fg-0);
 }
 
-.titlebar__controls {
+.titlebar-controls {
   display: flex;
   gap: 3px;
 }
 
-.titlebar__btn {
+.titlebar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -244,8 +244,8 @@ button { cursor: pointer; }
   border: 1px solid var(--fg-3);
 }
 
-.titlebar__btn--close:hover,
-.titlebar__btn--close:focus-visible {
+.titlebar-btn-close:hover,
+.titlebar-btn-close:focus-visible {
   background: var(--fg-3);
 }
 
@@ -286,7 +286,7 @@ button { cursor: pointer; }
   border-bottom-color: var(--fg-0);
 }
 
-.file-link__icon {
+.file-link-icon {
   width: 1.15em;
   height: 1.15em;
   margin-right: 6px;
@@ -320,7 +320,7 @@ button { cursor: pointer; }
   border-top: 1px solid var(--line-2);
 }
 
-.promptbar__input {
+.promptbar-input {
   flex: 1 1 auto;
   min-width: 0;
   padding: 7px 10px;
@@ -331,9 +331,9 @@ button { cursor: pointer; }
   border-radius: var(--radius);
 }
 
-.promptbar__input:disabled { color: var(--fg-2); }
+.promptbar-input:disabled { color: var(--fg-2); }
 
-.promptbar__button {
+.promptbar-button {
   flex: none;
   min-width: 92px;
   padding: 7px 16px;
@@ -344,21 +344,21 @@ button { cursor: pointer; }
   border-radius: var(--radius);
 }
 
-.promptbar__button:hover:not(:disabled) { background: var(--line-2); }
+.promptbar-button:hover:not(:disabled) { background: var(--line-2); }
 
-.promptbar__button:active:not(:disabled) {
+.promptbar-button:active:not(:disabled) {
   background: var(--bg-3);
   transform: translateY(1px);
 }
 
-.promptbar__button:disabled {
+.promptbar-button:disabled {
   color: var(--fg-3);
   cursor: not-allowed;
 }
 
 /* Blinks in steps like the cursor, so the browser repaints twice a cycle
    rather than on every frame. */
-.promptbar__button.is-flashing {
+.promptbar-button.is-flashing {
   animation: flash 1.05s step-end infinite;
 }
 
@@ -380,7 +380,7 @@ button { cursor: pointer; }
   padding: clamp(8px, 3vw, 40px);
 }
 
-.viewer__backdrop {
+.viewer-backdrop {
   position: absolute;
   inset: 0;
   background: var(--backdrop);
@@ -388,7 +388,7 @@ button { cursor: pointer; }
 
 /* 100% of the viewer, not a vh value, so the close button stays on screen
    under a mobile browser's toolbars. */
-.window--viewer {
+.window-viewer {
   position: relative;
   width: min(860px, 100%);
   max-height: min(760px, 100%);
@@ -396,7 +396,7 @@ button { cursor: pointer; }
 }
 
 /* The stable gutter stops about_me.md re-wrapping when a scrollbar appears. */
-.viewer__body {
+.viewer-body {
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
@@ -406,13 +406,13 @@ button { cursor: pointer; }
    Editor pages: about_me.md, experiences.json
    --------------------------------------------------------- */
 
-.editor__tabs {
+.editor-tabs {
   display: flex;
   background: var(--bg-3);
   border-bottom: 1px solid var(--line-1);
 }
 
-.editor__tab {
+.editor-tab {
   padding: 8px 14px;
   font-size: var(--text-sm);
   color: var(--fg-0);
@@ -422,7 +422,7 @@ button { cursor: pointer; }
   border-right: 1px solid var(--line-1);
 }
 
-.editor__code {
+.editor-code {
   counter-reset: line;
   padding: 14px 14px 20px 0;
   overflow-x: auto;
@@ -430,7 +430,7 @@ button { cursor: pointer; }
   background: var(--bg-1);
 }
 
-.editor__code .line {
+.editor-code .line {
   counter-increment: line;
   position: relative;
   min-height: 1.55em;
@@ -439,7 +439,7 @@ button { cursor: pointer; }
   white-space: pre-wrap;
 }
 
-.editor__code .line::before {
+.editor-code .line::before {
   content: counter(line);
   position: absolute;
   left: 0;
@@ -448,7 +448,7 @@ button { cursor: pointer; }
   color: var(--fg-3);
 }
 
-.editor__status {
+.editor-status {
   display: flex;
   gap: 18px;
   padding: 6px 14px;
@@ -464,7 +464,7 @@ button { cursor: pointer; }
 
 .profile { padding: 18px clamp(14px, 3vw, 26px) 26px; }
 
-.profile__header {
+.profile-header {
   display: flex;
   gap: 14px;
   align-items: flex-start;
@@ -472,7 +472,7 @@ button { cursor: pointer; }
   border-bottom: 1px solid var(--line-1);
 }
 
-.profile__avatar {
+.profile-avatar {
   flex: none;
   width: 58px;
   height: 58px;
@@ -485,22 +485,22 @@ button { cursor: pointer; }
   border: 1px solid var(--line-2);
 }
 
-.profile__name {
+.profile-name {
   margin: 0;
   font-size: var(--text-lg);
   color: var(--fg-0);
 }
 
-.profile__tagline {
+.profile-tagline {
   margin: 3px 0 0;
   font-size: var(--text-md);
   color: var(--fg-2);
   max-width: 60ch;
 }
 
-.profile__tagline + .profile__tagline { margin-top: 0; }
+.profile-tagline + .profile-tagline { margin-top: 0; }
 
-.profile__meta {
+.profile-meta {
   margin: 6px 0 0;
   font-size: var(--text-sm);
   color: var(--fg-3);
@@ -517,7 +517,7 @@ button { cursor: pointer; }
 
 .role:last-child { border-bottom: 0; }
 
-.role__logo {
+.role-logo {
   flex: none;
   width: 42px;
   height: 42px;
@@ -530,11 +530,11 @@ button { cursor: pointer; }
   border: 1px solid var(--line-1);
 }
 
-.role__title { margin: 0; font-size: var(--text-lg); color: var(--fg-0); }
-.role__org   { margin: 2px 0 0; font-size: var(--text-md); color: var(--fg-1); }
-.role__dates { margin: 2px 0 0; font-size: var(--text-sm); color: var(--fg-3); }
+.role-title { margin: 0; font-size: var(--text-lg); color: var(--fg-0); }
+.role-org   { margin: 2px 0 0; font-size: var(--text-md); color: var(--fg-1); }
+.role-dates { margin: 2px 0 0; font-size: var(--text-sm); color: var(--fg-3); }
 
-.role__points {
+.role-points {
   margin: 10px 0 0;
   padding-left: 18px;
   font-size: var(--text-md);
@@ -542,16 +542,16 @@ button { cursor: pointer; }
   max-width: 68ch;
 }
 
-.role__points li { margin-bottom: 4px; }
+.role-points li { margin-bottom: 4px; }
 
-.role__tags {
+.role-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin: 10px 0 0;
 }
 
-.role__tags span {
+.role-tags span {
   padding: 2px 8px;
   font-size: var(--text-sm);
   color: var(--fg-1);
@@ -565,7 +565,7 @@ button { cursor: pointer; }
 
 .notebook { padding-bottom: 24px; }
 
-.notebook__toolbar {
+.notebook-toolbar {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -578,7 +578,7 @@ button { cursor: pointer; }
 
 /* Actions that do not fit wrap onto a second row, which is clipped, so a
    narrow window drops whole buttons behind the '...' rather than squashing. */
-.notebook__actions {
+.notebook-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -587,7 +587,7 @@ button { cursor: pointer; }
   overflow: hidden;
 }
 
-.notebook__action {
+.notebook-action {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -596,20 +596,20 @@ button { cursor: pointer; }
   white-space: nowrap;
 }
 
-.notebook__icon {
+.notebook-icon {
   flex: none;
   width: 1.35em;
   height: 1.35em;
 }
 
-.notebook__divider {
+.notebook-divider {
   width: 1px;
   height: 1.1rem;
   margin: 0 4px;
   background: var(--line-2);
 }
 
-.notebook__kernel {
+.notebook-kernel {
   flex: none;
   margin-left: auto;
   padding-left: 8px;
@@ -624,7 +624,7 @@ button { cursor: pointer; }
   padding: 14px clamp(12px, 3vw, 22px) 0;
 }
 
-.cell__marker {
+.cell-marker {
   flex: none;
   width: 7ch;
   padding-top: 10px;
@@ -633,7 +633,7 @@ button { cursor: pointer; }
   color: var(--fg-3);
 }
 
-.cell__box {
+.cell-box {
   flex: 1 1 auto;
   min-width: 0;
   padding: 12px 14px;
@@ -642,34 +642,34 @@ button { cursor: pointer; }
   border-left: 3px solid var(--fg-3);
 }
 
-.cell__title {
+.cell-title {
   margin: 0;
   font-size: var(--text-lg);
   color: var(--fg-0);
 }
 
-.cell__body {
+.cell-body {
   max-width: 70ch;
   margin: 8px 0 0;
   font-size: var(--text-md);
   color: var(--fg-2);
 }
 
-.cell__body + .cell__body { margin-top: 0; }
+.cell-body + .cell-body { margin-top: 0; }
 
-.cell--output { padding-top: 8px; }
+.cell-output { padding-top: 8px; }
 
-.cell__marker--out {
+.cell-marker-out {
   padding-top: 2px;
   color: var(--fg-2);
 }
 
-.cell__result {
+.cell-result {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.cell__repo {
+.cell-repo {
   display: inline-block;
   font-size: var(--text-sm);
   color: var(--fg-1);
@@ -677,13 +677,13 @@ button { cursor: pointer; }
   border-bottom: 1px dashed var(--fg-3);
 }
 
-.cell__repo:hover,
-.cell__repo:focus-visible {
+.cell-repo:hover,
+.cell-repo:focus-visible {
   color: var(--fg-0);
   border-bottom-color: var(--fg-0);
 }
 
-.cell__preview {
+.cell-preview {
   display: block;
   width: min(420px, 100%);
   margin-top: 8px;
@@ -692,7 +692,7 @@ button { cursor: pointer; }
   border: 1px solid var(--line-1);
 }
 
-.cell__preview img {
+.cell-preview img {
   display: block;
   width: 100%;
   aspect-ratio: 2 / 1;
@@ -706,29 +706,37 @@ button { cursor: pointer; }
 
 .contact { padding: 20px clamp(14px, 3vw, 26px) 26px; }
 
-.contact__intro {
+.contact-intro {
   margin: 0 0 18px;
   font-size: var(--text-md);
   color: var(--fg-2);
 }
 
-.contact__intro p { margin: 0; }
+.contact-intro p { margin: 0; }
 
-.contact__field { margin-bottom: 16px; }
+.contact-field { margin-bottom: 16px; }
 
-.contact__field label {
-  display: block;
+.contact-field label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 6px;
   font-size: var(--text-sm);
   color: var(--fg-2);
 }
 
-.contact__row {
+.contact-icon {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.contact-row {
   display: flex;
   gap: 8px;
 }
 
-.contact__row input {
+.contact-row input {
   flex: 1 1 auto;
   min-width: 0;
   padding: 7px 10px;
@@ -739,9 +747,11 @@ button { cursor: pointer; }
   border-radius: var(--radius);
 }
 
-.contact__copy {
+.contact-copy {
   flex: none;
-  padding: 7px 14px;
+  display: flex;
+  align-items: center;
+  padding: 7px 12px;
   font-size: var(--text-md);
   color: var(--fg-0);
   background: var(--line-1);
@@ -749,10 +759,15 @@ button { cursor: pointer; }
   border-radius: var(--radius);
 }
 
-.contact__copy:hover,
-.contact__copy:focus-visible { background: var(--line-2); }
+.contact-copy:hover,
+.contact-copy:focus-visible { background: var(--line-2); }
 
-.contact__note {
+.contact-copy-icon {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.contact-note {
   min-height: 1.2em;
   margin: 6px 0 0;
   font-size: var(--text-sm);
@@ -765,7 +780,7 @@ button { cursor: pointer; }
 
 .devlog { padding: 18px clamp(14px, 3vw, 26px) 26px; }
 
-.devlog__banner {
+.devlog-banner {
   margin: 0 0 16px;
   padding: 8px 10px;
   font-size: var(--text-sm);
@@ -774,62 +789,62 @@ button { cursor: pointer; }
   border: 1px dashed var(--line-2);
 }
 
-.devlog__summary {
+.devlog-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
   margin: 0 0 18px;
 }
 
-.devlog__summary div {
+.devlog-summary div {
   padding: 10px 12px;
   background: var(--bg-1);
   border: 1px solid var(--line-1);
 }
 
-.devlog__summary dt {
+.devlog-summary dt {
   font-size: var(--text-sm);
   color: var(--fg-3);
 }
 
-.devlog__summary dd {
+.devlog-summary dd {
   margin: 4px 0 0;
   font-size: var(--text-md);
   color: var(--fg-0);
 }
 
-.devlog__table {
+.devlog-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--text-sm);
 }
 
-.devlog__table th,
-.devlog__table td {
+.devlog-table th,
+.devlog-table td {
   padding: 8px 10px;
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid var(--line-1);
 }
 
-.devlog__table th {
+.devlog-table th {
   font-weight: 400;
   color: var(--fg-3);
   background: var(--bg-1);
 }
 
-.devlog__table td { color: var(--fg-1); }
+.devlog-table td { color: var(--fg-1); }
 
-.devlog__table tr.is-stale td { color: var(--fg-0); }
+.devlog-table tr.is-stale td { color: var(--fg-0); }
 
-.devlog__flag {
+.devlog-flag {
   margin-left: 8px;
   padding: 1px 6px;
   color: var(--bg-1);
   background: var(--fg-2);
 }
 
-.devlog__hint {
+.devlog-hint {
   margin: 14px 0 0;
   font-size: var(--text-sm);
   color: var(--fg-3);
@@ -843,39 +858,39 @@ button { cursor: pointer; }
   html { font-size: 16px; }
 
   /* Below 16px, iOS zooms the page into a focused field. */
-  .promptbar__input,
-  .contact__row input { font-size: 1rem; }
+  .promptbar-input,
+  .contact-row input { font-size: 1rem; }
 
   .terminal {
     height: clamp(260px, 50vh, 420px);
     padding: 10px 11px 14px;
   }
 
-  .titlebar__btn {
+  .titlebar-btn {
     width: 2.25rem;
     height: 1.75rem;
     font-size: var(--text-md);
   }
 
-  .editor__code .line { padding-left: 46px; }
-  .editor__code .line::before { width: 30px; }
+  .editor-code .line { padding-left: 46px; }
+  .editor-code .line::before { width: 30px; }
 
-  .profile__header { gap: 10px; }
-  .profile__avatar { width: 46px; height: 46px; }
+  .profile-header { gap: 10px; }
+  .profile-avatar { width: 46px; height: 46px; }
 }
 
 @media (max-width: 430px) {
   .promptbar { gap: 6px; padding: 7px; }
-  .promptbar__button { min-width: 68px; padding: 7px 10px; }
-  .titlebar__btn:not(.titlebar__btn--close) { display: none; }
-  .contact__copy { padding: 7px 10px; }
+  .promptbar-button { min-width: 68px; padding: 7px 10px; }
+  .titlebar-btn:not(.titlebar-btn-close) { display: none; }
+  .contact-copy { padding: 7px 9px; }
 }
 
 /* The caret and the Enter prompt stay visible, they just stop blinking. */
 @media (prefers-reduced-motion: reduce) {
   .cursor { animation: none; }
 
-  .promptbar__button.is-flashing {
+  .promptbar-button.is-flashing {
     animation: none;
     color: var(--bg-1);
     background: var(--fg-0);

@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue';
+import EmailIcon from '~icons/mdi/email-outline';
+import GithubIcon from '~icons/mdi/github';
+import LinkedinIcon from '~icons/mdi/linkedin';
+import CopyIcon from '~icons/mdi/content-copy';
 import { toLines } from '../../utils/toLines.js';
 
 const props = defineProps({
@@ -8,6 +12,18 @@ const props = defineProps({
 
 const intro = toLines(props.data.intro);
 const note = ref('');
+
+const ICONS = {
+  'contact-email': EmailIcon,
+  'contact-github': GithubIcon,
+  'contact-linkedin': LinkedinIcon
+};
+
+/* Throws rather than rendering a label with a gap where its icon belongs. */
+function iconFor(id) {
+  if (!ICONS[id]) { throw new Error('contact.json field has no icon: ' + id); }
+  return ICONS[id];
+}
 
 /* Selects the text first so a blocked clipboard still leaves it ready to copy.
    iOS ignores select() on read-only fields, hence the explicit range. */
@@ -27,18 +43,26 @@ async function copyField(field) {
 
 <template>
   <div class="contact">
-    <div class="contact__intro">
+    <div class="contact-intro">
       <p v-for="(paragraph, part) in intro" :key="part">{{ paragraph }}</p>
     </div>
 
-    <div v-for="field in props.data.fields" :key="field.id" class="contact__field">
-      <label :for="field.id">{{ field.label }}</label>
-      <div class="contact__row">
+    <div v-for="field in props.data.fields" :key="field.id" class="contact-field">
+      <label :for="field.id">
+        <component :is="iconFor(field.id)" class="contact-icon" aria-hidden="true" />{{ field.label }}
+      </label>
+      <div class="contact-row">
         <input :id="field.id" type="text" :value="field.value" readonly>
-        <button class="contact__copy" type="button" @click="copyField(field)">Copy</button>
+        <button
+          class="contact-copy"
+          type="button"
+          :aria-label="'Copy ' + field.label"
+          @click="copyField(field)">
+          <CopyIcon class="contact-copy-icon" aria-hidden="true" />
+        </button>
       </div>
     </div>
 
-    <p class="contact__note" role="status">{{ note }}</p>
+    <p class="contact-note" role="status">{{ note }}</p>
   </div>
 </template>

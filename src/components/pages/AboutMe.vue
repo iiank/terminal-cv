@@ -101,15 +101,15 @@ onBeforeUnmount(function () { observer.disconnect(); });
 
 <template>
   <div class="editor">
-    <div class="editor__tabs">
-      <span class="editor__tab">about_me.md</span>
+    <div class="editor-tabs">
+      <span class="editor-tab">about_me.md</span>
     </div>
 
-    <div ref="code" class="editor__code">
+    <div ref="code" class="editor-code">
       <p v-for="(row, index) in rows" :key="index" class="line"><span v-for="(token, part) in row" :key="part" :class="token.c">{{ token.t }}</span></p>
     </div>
 
-    <div class="editor__status">
+    <div class="editor-status">
       <span>Markdown</span>
       <span>UTF-8</span>
       <span>Ln {{ rows.length }}, Col 1</span>
