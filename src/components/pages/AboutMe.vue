@@ -110,9 +110,9 @@ onBeforeUnmount(function () { observer.disconnect(); });
     </div>
 
     <div class="editor-status">
-      <span>Markdown</span>
-      <span>UTF-8</span>
       <span>Ln {{ rows.length }}, Col 1</span>
+      <span>UTF-8</span>
+      <span>Markdown</span>
     </div>
   </div>
 </template>

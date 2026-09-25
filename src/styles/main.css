@@ -403,7 +403,7 @@ button { cursor: pointer; }
 }
 
 /* ---------------------------------------------------------
-   Editor pages: about_me.md, experiences.json
+   Editor page: about_me.md
    --------------------------------------------------------- */
 
 .editor-tabs {
@@ -704,7 +704,32 @@ button { cursor: pointer; }
    contact.txt
    --------------------------------------------------------- */
 
-.contact { padding: 20px clamp(14px, 3vw, 26px) 26px; }
+.contact-menu {
+  display: flex;
+  gap: 18px;
+  padding: 6px 14px;
+  font-size: var(--text-sm);
+  color: var(--fg-1);
+  background: var(--bg-3);
+  border-bottom: 1px solid var(--line-1);
+}
+
+.contact-body { padding: 20px clamp(14px, 3vw, 26px) 26px; }
+
+.contact-status {
+  display: flex;
+  gap: 14px;
+  padding: 6px 14px;
+  font-size: var(--text-sm);
+  color: var(--fg-2);
+  background: var(--bg-3);
+  border-top: 1px solid var(--line-1);
+}
+
+.contact-status span + span {
+  padding-left: 14px;
+  border-left: 1px solid var(--line-2);
+}
 
 .contact-intro {
   margin: 0 0 18px;

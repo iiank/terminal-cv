@@ -4,7 +4,7 @@
 import { ref } from 'vue';
 import { getFile, fileNames } from '../files.js';
 
-export const PROMPT = 'C:\\Users\\iiankhor>';
+export const PROMPT = 'C:\\Users\\iiankhor> ';
 
 const GREETING = ['Hi!', 'My name is Iian!', 'What can I do for you?'];
 
